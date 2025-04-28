@@ -1,10 +1,12 @@
 <?php
 /**
- * File: Class-Admin-Menu.php
+ * File:        Class-Admin-Menu.php
  * Description: تعریف منوی اصلی «کاردیفا» و زیرمنوها
+ * Since:       1.0.0
+ * Author:      Kiya Holding
  */
 
-namespace Cardifa\Src\Admin;
+namespace Cardifa\Admin;
 
 defined('ABSPATH') || exit;
 
@@ -12,73 +14,63 @@ use Cardifa\Admin\Class_Settings;
 
 class Class_Admin_Menu
 {
+    /**
+     * Class_Admin_Menu constructor.
+     *
+     * @since 1.0.0
+     */
     public function __construct()
     {
-        add_action('admin_menu', [$this, 'add_admin_menu']);
+        add_action('admin_menu',          [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
     }
 
-    public function add_admin_menu()
+    /**
+     * افزودن آیتم منو و زیرمنوها
+     *
+     * @since 1.0.0
+     */
+    public function add_admin_menu(): void
     {
-        $icon = 'dashicons-id';
-
-        // منوی اصلی
         add_menu_page(
             __('کاردیفا', 'cardifa'),
             __('کاردیفا', 'cardifa'),
             'manage_options',
-            'cardifa_main_menu',
-            [$this, 'settings_page'],
-            $icon,
-            21
+            'cardifa',
+            [$this, 'render_dashboard_page'],
+            'dashicons-id-alt',
+            25
         );
 
         add_submenu_page(
-            'cardifa_main_menu',
-            __('افزودن کاردیفا جدید', 'cardifa'),
-            __('افزودن کاردیفا جدید', 'cardifa'),
-            'manage_options',
-            'post-new.php?post_type=cardifa'
-        );
-
-        add_submenu_page(
-            'cardifa_main_menu',
-            __('دیدگاه‌های کاردیفا‌ها', 'cardifa'),
-            __('دیدگاه‌های کاردیفا‌ها', 'cardifa'),
-            'manage_options',
-            'edit-comments.php?comment_type=cardifa'
-        );
-
-        add_submenu_page(
-            'cardifa_main_menu',
-            __('تنظیمات کاردیفا', 'cardifa'),
+            'cardifa',
+            __('تنظیمات', 'cardifa'),
             __('تنظیمات', 'cardifa'),
             'manage_options',
-            'cardifa_settings',
-            [$this, 'settings_page']
+            'cardifa-settings',
+            [Class_Settings::class, 'render']
         );
     }
 
-    public function enqueue_admin_assets()
+    /**
+     * enqueue اسکریپت و استایل ادمین
+     *
+     * @since 1.0.0
+     */
+    public function enqueue_admin_assets(): void
     {
-        wp_enqueue_style(
-            'cardifa-admin',
-            CARDIFA_URL . 'Assets/Admin/Css/admin.css',
-            [],
-            CARDIFA_VERSION
-        );
-
-        wp_enqueue_script(
-            'cardifa-settings-js',
-            CARDIFA_URL . 'Assets/Admin/Js/settings.js',
-            ['jquery'],
-            CARDIFA_VERSION,
-            true
-        );
+        wp_enqueue_style('cardifa-admin', CARDIFA_URL . 'Assets/Admin/Css/Admin.css', [], CARDIFA_VERSION);
+        wp_enqueue_script('cardifa-admin-settings', CARDIFA_URL . 'Assets/Admin/Js/Settings.js', ['jquery'], CARDIFA_VERSION, true);
     }
 
-    public function settings_page()
+    /**
+     * رندر صفحه داشبورد (مثلاً redirect یا خلاصه)
+     *
+     * @since 1.0.0
+     */
+    public function render_dashboard_page(): void
     {
-        Class_Settings::render();
+        // TODO: کد نمایش داشبورد اینجا
+        echo '<div class="wrap"><h1>' . esc_html__('Dashboard کاردیفا', 'cardifa') . '</h1></div>';
     }
 }
