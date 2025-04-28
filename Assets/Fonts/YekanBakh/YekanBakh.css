@@ -1,0 +1,32 @@
+/**
+ * File: YekanBakh.css
+ * Location: assets/fonts/YekanBakh/
+ * Description: @font-face declarations برای همهٔ وزن‌های YekanBakh
+ */
+
+@font-face {
+  font-family: 'YekanBakh';
+  font-style: normal;
+  font-weight: 400;
+  src: url('YekanBakh-Regular.woff2') format('woff2'),
+       url('YekanBakh-Regular.woff')  format('woff'),
+       url('YekanBakh-Regular.ttf')   format('truetype');
+}
+
+@font-face {
+  font-family: 'YekanBakh';
+  font-style: normal;
+  font-weight: 700;
+  src: url('YekanBakh-Bold.woff2') format('woff2'),
+       url('YekanBakh-Bold.woff')  format('woff'),
+       url('YekanBakh-Bold.ttf')   format('truetype');
+}
+
+@font-face {
+  font-family: 'YekanBakh';
+  font-style: normal;
+  font-weight: 900;
+  src: url('YekanBakh-ExtraBlack.woff2') format('woff2'),
+       url('YekanBakh-ExtraBlack.woff')  format('woff'),
+       url('YekanBakh-ExtraBlack.ttf')   format('truetype');
+}
