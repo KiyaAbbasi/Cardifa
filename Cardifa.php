@@ -1,18 +1,23 @@
 <?php
 /**
- * Plugin Name:   کاردیفا – سازنده کارت ویزیت دیجیتال
- * Plugin URI:    https://github.com/KiyaAbbasi/Cardifa
- * Description:   افزونه‌ای کامل برای ساخت کارت دیجیتال، لینک بایو، سیستم اشتراک و پنل کاربری…
- * Version:       3.0.0
- * Author:        Kiya Holding
- * Author URI:    https://kiyaholding.com
- * Text Domain:   cardifa
- * Domain Path:   /lang
+ * Plugin Name: کاردیفا - سازنده کارت ویزیت دیجیتال
+ * Plugin URI: https://github.com/KiyaAbbasi/Cardifa
+ * GitHub Plugin URI: https://github.com/KiyaAbbasi/Cardifa
+ * GitHub Branch: Cardifa
+ * Description: افزونه‌ای کامل برای ساخت کارت دیجیتال، لینک بایو، سیستم اشتراک و پنل کاربری با قابلیت ثبت‌نام با شماره موبایل و ویجت‌های حرفه‌ای المنتور.
+ * Version: 3.0.0
+ * Author: Kiya Holding
+ * Author URI: https://kiyaholding.com
+ * Text Domain: cardifa
+ * Domain Path: /lang
+ *
+ * @package Cardifa
+ * @since   1.0.0
  */
 
 defined('ABSPATH') || exit;
 
-// ─── ثابت‌ها ────────────────────────────
+// ─── ثابت‌ها ───────────────────────────────────
 if (! defined('CARDIFA_VERSION')) {
     define('CARDIFA_VERSION', '3.0.0');
 }
@@ -26,7 +31,7 @@ if (! defined('CARDIFA_URL')) {
     define('CARDIFA_URL', plugin_dir_url(__FILE__));
 }
 
-// ─── ترجمه‌ها ────────────────────────────
+// ─── ترجمه‌ها ───────────────────────────────────
 add_action('plugins_loaded', function() {
     load_plugin_textdomain(
         'cardifa',
@@ -35,42 +40,30 @@ add_action('plugins_loaded', function() {
     );
 });
 
-// ─── PSR-4 Autoloader ────────────────────
+// ─── Autoload همه کلاس‌های Src/ براساس PSR-4 ──────
 spl_autoload_register(function($class) {
-    // only load our namespace
+    // فقط نِیم‌اسپیس Cardifa\
     if (strpos($class, 'Cardifa\\') !== 0) {
         return;
     }
     // Cardifa\Foo\Bar => Src/Foo/Bar.php
-    $relative = str_replace('\\', '/', substr($class, strlen('Cardifa\\')));
-    $file = CARDIFA_PATH . 'Src/' . $relative . '.php';
+    $rel = str_replace('\\', '/', substr($class, strlen('Cardifa\\')));
+    $file = CARDIFA_PATH . 'Src/' . $rel . '.php';
     if (file_exists($file)) {
         require_once $file;
     }
 });
 
-// ─── include قدیمی (Activation/Deactivation) ─
+// ─── فانکشن‌های Activation/Deactivation (بدون کلاس) ─
 require_once CARDIFA_PATH . 'Includes/Activation.php';
 require_once CARDIFA_PATH . 'Includes/Deactivation.php';
 
-// ─── Activation / Deactivation Hooks ──────
-register_activation_hook(CARDIFA_FILE,   'cardifa_activate_plugin');
-register_deactivation_hook(CARDIFA_FILE, 'cardifa_deactivate_plugin');
+// ─── هوک‌های نصب/حذف ───────────────────────────────
+register_activation_hook( CARDIFA_FILE,   'cardifa_activate_plugin' );
+register_deactivation_hook(CARDIFA_FILE, 'cardifa_deactivate_plugin' );
 
-// ─── بوت‌کردن افزونه ─────────────────────
+// ─── بوت‌کردن اصلی افزونه (Admin / Public / Elementor) ─
 add_action('init', function() {
-    // Core Application
+    // متد run() در Application همه‌ی Bootstrap ها رو register می‌کنه
     \Cardifa\Core\Application::getInstance()->run();
-    
-    // اگر بدون Composer می‌خوای Admin Loader داشته باشی
-    if (class_exists('Cardifa\\Src\\Admin\\Admin_Loader')) {
-        new \Cardifa\Src\Admin\Admin_Loader();
-    }
 }, 0);
-
-// ─── Elementor Widgets لود خودکار ───────
-add_action('elementor/widgets/widgets_registered', function() {
-    foreach (glob(CARDIFA_PATH . 'Src/Elementor/Widgets/*.php') as $f) {
-        require_once $f;  // کلاس‌ها namespace رو حفظ کنن!
-    }
-}, 5);
