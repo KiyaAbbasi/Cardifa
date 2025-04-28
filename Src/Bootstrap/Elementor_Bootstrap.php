@@ -12,99 +12,46 @@
  * @package         Cardifa\Bootstrap
  */
 
-namespace Cardifa\Src\Bootstrap;
+namespace Cardifa\Bootstrap;
 
-use Cardifa\Src\Services\HookManager;
-use Cardifa\Src\Services\AssetManager;
+use Cardifa\Services\AssetManager;
+use Cardifa\Services\HookManager;
+use Elementor\Plugin as Elementor;
 
 defined('ABSPATH') || exit;
 
-/**
- * کلاس راه‌اندازی المنتور
- *
- * @since 1.0.0
- * @package Cardifa\Bootstrap
- */
 class Elementor_Bootstrap
 {
     /**
-     * @var HookManager
-     */
-    private $hook_manager;
-
-    /**
-     * ثبت المنتور
+     * ثبت هوک‌ها و categories المنتور
      *
      * @since 1.0.0
      */
-    public function register()
+    public static function register(): void
     {
-        if (!did_action('elementor/loaded')) {
-            add_action('admin_notices', [$this, 'show_elementor_required_notice']);
-            return;
+        // دسته‌بندی اختصاصی
+        Elementor::instance()->elements_manager->add_category(
+            'cardifa',
+            ['title' => __('Cardifa','cardifa'),'icon'=>'fa fa-id-card']
+        );
+
+        // بارگذاری ویجت‌ها
+        foreach (glob(CARDIFA_PATH . 'Src/Elementor/Widgets/*.php') as $file) {
+            require_once $file;
+        }
+        foreach (get_declared_classes() as $class) {
+            if (strpos($class, 'Cardifa\\Elementor\\Widgets\\') === 0) {
+                $widget = new $class();
+                Elementor::instance()->widgets_manager->register_widget_type($widget);
+            }
         }
 
-        $this->hook_manager = new HookManager();
-
-        $this->init_hooks();
-        $this->load_dependencies();
-    }
-
-    /**
-     * راه‌اندازی هوک‌های المنتور
-     *
-     * @since 1.0.0
-     */
-    private function init_hooks()
-    {
-        $this->hook_manager->add_action('elementor/elements/categories_registered', [$this, 'register_widget_category']);
-        $this->hook_manager->add_action('elementor/widgets/register', [$this, 'register_widgets']);
-    }
-
-    /**
-     * بارگذاری وابستگی‌های المنتور
-     *
-     * @since 1.0.0
-     */
-    private function load_dependencies()
-    {
-        require_once CARDIFA_PATH . 'Src/Elementor/widgets-loader.php';
-    }
-
-    /**
-     * ثبت دسته‌بندی ویجت‌های کاردیفا
-     *
-     * @param \Elementor\Elements_Manager $elements_manager
-     * @since 1.0.0
-     */
-    public function register_widget_category($elements_manager)
-    {
-        $elements_manager->add_category('cardifa', [
-            'title' => __('کاردیفا', 'cardifa'),
-            'icon'  => 'fa fa-id-card',
-        ]);
-    }
-
-    /**
-     * ثبت ویجت‌های کاردیفا
-     *
-     * @param \Elementor\Widgets_Manager $widgets_manager
-     * @since 1.0.0
-     */
-    public function register_widgets($widgets_manager)
-    {
-        // TODO: ثبت ویجت‌های سفارشی در صورت نیاز
-    }
-
-    /**
-     * نمایش پیام نیاز به المنتور
-     *
-     * @since 1.0.0
-     */
-    public function show_elementor_required_notice()
-    {
-        echo '<div class="notice notice-warning is-dismissible"><p>';
-        echo esc_html__('کاردیفا نیاز به نصب و فعال‌سازی افزونه المنتور دارد.', 'cardifa');
-        echo '</p></div>';
+        // enqueue CSS/JS ادیتور فقط در CPT cardifa
+        add_action('elementor/editor/before_enqueue_scripts', function() {
+            if (get_post_type() === 'cardifa') {
+                wp_enqueue_style('cardifa-elementor-editor', CARDIFA_URL . 'Assets/Elementor/Css/Editor.css', [], CARDIFA_VERSION);
+                wp_enqueue_script('cardifa-elementor-editor', CARDIFA_URL . 'Assets/Elementor/Js/Editor.js', [], CARDIFA_VERSION, true);
+            }
+        });
     }
 }
