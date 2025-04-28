@@ -14,8 +14,8 @@
 
 namespace Cardifa\Core;
 
-use Cardifa\Bootstrap\Admin_Bootstrap;
 use Cardifa\Admin\Admin_Loader;
+use Cardifa\Bootstrap\Admin_Bootstrap;
 use Cardifa\Bootstrap\Public_Bootstrap;
 use Cardifa\Bootstrap\Elementor_Bootstrap;
 
@@ -129,7 +129,7 @@ final class Application
             Elementor_Bootstrap::register();
         }
 
-        // ─── بارگذاری فایل‌های شامل (CPT, Tax, Roles…) ──
+        // ─── بارگذاری فایل‌های شامل (CPT, Taxonomies, Roles…) ──
         $this->load_includes();
     }
 
