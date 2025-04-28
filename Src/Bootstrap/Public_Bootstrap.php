@@ -12,9 +12,9 @@
  * @package         Cardifa\Bootstrap
  */
 
-namespace Cardifa\Bootstrap;
+namespace Cardifa\Bootstrap; // ← اصلاح شد
 
-use Cardifa\Services\AssetManager;
+use Cardifa\Services\AssetManager;   // ← namespace صحیح
 
 defined('ABSPATH') || exit;
 
