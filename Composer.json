@@ -1,2 +1,14 @@
-composer dump-autoload
-
+{
+    "name": "kiyaholding/cardifa",
+    "description": "کاردیفا - سازنده کارت ویزیت دیجیتال",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cardifa\\": "Src/"
+        }
+    }
+}
