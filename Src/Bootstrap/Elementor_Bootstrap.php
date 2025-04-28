@@ -12,10 +12,9 @@
  * @package         Cardifa\Bootstrap
  */
 
-namespace Cardifa\Bootstrap;
+namespace Cardifa\Bootstrap; // ← اصلاح شد
 
 use Cardifa\Services\AssetManager;
-use Cardifa\Services\HookManager;
 use Elementor\Plugin as Elementor;
 
 defined('ABSPATH') || exit;
@@ -35,7 +34,7 @@ class Elementor_Bootstrap
             ['title' => __('Cardifa','cardifa'),'icon'=>'fa fa-id-card']
         );
 
-        // بارگذاری ویجت‌ها
+        // لود خودکار ویجت‌ها
         foreach (glob(CARDIFA_PATH . 'Src/Elementor/Widgets/*.php') as $file) {
             require_once $file;
         }
@@ -49,8 +48,19 @@ class Elementor_Bootstrap
         // enqueue CSS/JS ادیتور فقط در CPT cardifa
         add_action('elementor/editor/before_enqueue_scripts', function() {
             if (get_post_type() === 'cardifa') {
-                wp_enqueue_style('cardifa-elementor-editor', CARDIFA_URL . 'Assets/Elementor/Css/Editor.css', [], CARDIFA_VERSION);
-                wp_enqueue_script('cardifa-elementor-editor', CARDIFA_URL . 'Assets/Elementor/Js/Editor.js', [], CARDIFA_VERSION, true);
+                wp_enqueue_style(
+                    'cardifa-elementor-editor',
+                    CARDIFA_URL . 'Assets/Elementor/Css/Editor.css',
+                    [],
+                    CARDIFA_VERSION
+                );
+                wp_enqueue_script(
+                    'cardifa-elementor-editor',
+                    CARDIFA_URL . 'Assets/Elementor/Js/Editor.js',
+                    [],
+                    CARDIFA_VERSION,
+                    true
+                );
             }
         });
     }
