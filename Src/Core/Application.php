@@ -14,22 +14,11 @@
 
 namespace Cardifa\Core;
 
-use Cardifa\Src\Admin\Admin_Loader;
-use Cardifa\Src\Bootstrap\Admin_Bootstrap;
-use Cardifa\Src\Bootstrap\Public_Bootstrap;
-use Cardifa\Src\Bootstrap\Elementor_Bootstrap;
-use Cardifa\Src\Services\HookManager;
-use Cardifa\Src\Services\AssetManager;
+use Cardifa\Bootstrap\Admin_Bootstrap;
+use Cardifa\Admin\Admin_Loader;
+use Cardifa\Bootstrap\Public_Bootstrap;
+use Cardifa\Bootstrap\Elementor_Bootstrap;
 
-
-defined('ABSPATH') || exit;
-
-/**
- * کلاس اصلی برنامه
- *
- * @since 1.0.0
- * @package Cardifa\Core
- */
 final class Application
 {
     /**
@@ -46,10 +35,28 @@ final class Application
      */
     private function __construct()
     {
-        $this->define_constants();
+        // ─── تعریف ثابت‌های اصلی ─────────────────────────
+        if (! defined('CARDIFA_VERSION')) {
+            define('CARDIFA_VERSION', '3.0.0');
+        }
+        if (! defined('CARDIFA_FILE')) {
+            define('CARDIFA_FILE', CARDIFA_PATH . 'Cardifa.php');
+        }
+        if (! defined('CARDIFA_PATH')) {
+            define('CARDIFA_PATH', plugin_dir_path(CARDIFA_FILE));
+        }
+        if (! defined('CARDIFA_URL')) {
+            define('CARDIFA_URL', plugin_dir_url(CARDIFA_FILE));
+        }
 
-        add_action('plugins_loaded', [$this, 'init']);
+        // ─── بارگذاری ترجمه‌ها ────────────────────────────
+        add_action('plugins_loaded', [$this, 'loadTextDomain']);
+
+        // ─── لینک تنظیمات در لیست پلاگین‌ها ───────────────
         add_filter('plugin_action_links_' . plugin_basename(CARDIFA_FILE), [$this, 'plugin_action_links']);
+
+        // ─── راه‌اندازی افزونه ───────────────────────────
+        add_action('init', [$this, 'init'], 1);
     }
 
     /**
@@ -58,33 +65,41 @@ final class Application
      * @return Application
      * @since 1.0.0
      */
-    public static function getInstance()
+    public static function getInstance(): Application
     {
-        if (null === self::$instance) {
+        if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
     /**
-     * تعریف ثابت‌های پروژه
+     * بارگذاری فایل زبان
      *
      * @since 1.0.0
      */
-    private function define_constants()
+    public function loadTextDomain(): void
     {
-        if (!defined('CARDIFA_VERSION')) {
-            define('CARDIFA_VERSION', '1.0.0');
-        }
-        if (!defined('CARDIFA_PATH')) {
-            define('CARDIFA_PATH', plugin_dir_path(__DIR__, 2)); // 👈 مسیر درست تا Cardifa/
-        }
-        if (!defined('CARDIFA_URL')) {
-            define('CARDIFA_URL', plugin_dir_url(__DIR__, 2)); // 👈 مسیر درست تا Cardifa/
-        }
-        if (!defined('CARDIFA_FILE')) {
-            define('CARDIFA_FILE', CARDIFA_PATH . 'Cardifa.php');
-        }
+        load_plugin_textdomain(
+            'cardifa',
+            false,
+            dirname(plugin_basename(CARDIFA_FILE)) . '/lang'
+        );
+    }
+
+    /**
+     * ثبت لینک تنظیمات در لیست پلاگین‌ها
+     *
+     * @param array $links
+     * @return array
+     * @since 1.0.0
+     */
+    public function plugin_action_links(array $links): array
+    {
+        $settings_link = '<a href="' . admin_url('admin.php?page=cardifa-settings') . '">' 
+                       . __('تنظیمات', 'cardifa') . '</a>';
+        array_unshift($links, $settings_link);
+        return $links;
     }
 
     /**
@@ -92,36 +107,40 @@ final class Application
      *
      * @since 1.0.0
      */
-    public function init()
+    public function init(): void
     {
         // بارگذاری ترجمه‌ها
-        load_plugin_textdomain('cardifa', false, dirname(plugin_basename(CARDIFA_FILE)) . '/lang');
+        $this->loadTextDomain();
 
-        // چک فعال بودن المنتور
-        if (!$this->check_elementor()) {
+        // بررسی فعال بودن المنتور
+        if (! $this->check_elementor()) {
             return;
         }
 
-        // راه‌اندازی بخش‌های اصلی
-        (new Admin_Bootstrap())->register();
-        (new Admin_Loader()); // 👈 اضافه میشه
-        (new Public_Bootstrap())->register();
-        (new Elementor_Bootstrap())->register();
+        // ─── بوت‌استرپ ادمین ─────────────────────────────
+        (new Admin_Loader());                // لودر کلاس‌های ادمین
+        Admin_Bootstrap::register();         // منوها و استایل/اسکریپت ادمین
 
+        // ─── بوت‌استرپ عمومی ────────────────────────────
+        Public_Bootstrap::register();        // شورتکد و Assets عمومی
 
+        // ─── بوت‌استرپ المنتور ─────────────────────────
+        if (defined('ELEMENTOR_VERSION')) {
+            Elementor_Bootstrap::register();
+        }
 
-        // بارگذاری فایل‌های اصلی شامل CPT ها، تکسونومی و ...
+        // ─── بارگذاری فایل‌های شامل (CPT, Tax, Roles…) ──
         $this->load_includes();
     }
 
     /**
-     * بارگذاری فایل‌های شامل
+     * بارگذاری فایل‌های شامل (CPT, Taxonomy, Meta Boxes, Roles)
      *
      * @since 1.0.0
      */
-    private function load_includes()
+    private function load_includes(): void
     {
-        $includes = [
+        $files = [
             'Includes/Functions.php',
             'Includes/Activation.php',
             'Includes/Deactivation.php',
@@ -129,13 +148,9 @@ final class Application
             'Includes/Taxonomies.php',
             'Includes/Meta-Boxes.php',
             'Includes/Roles-Capabilities.php',
-            'Src/Services/HookManager.php', // ✅ مسیر درست
-            'Src/Services/AssetManager.php', // ✅ مسیر درست
-            'Src/Admin/Class-Admin-Menu.php',
-            'Src/Admin/Class-Settings.php',
         ];
-    
-        foreach ($includes as $file) {
+
+        foreach ($files as $file) {
             $path = CARDIFA_PATH . $file;
             if (file_exists($path)) {
                 require_once $path;
@@ -144,44 +159,14 @@ final class Application
     }
 
     /**
-     * بارگذاری استایل‌های مدیریت
-     *
-     * @since 1.0.0
-     */
-    public function enqueue_admin_assets()
-    {
-        wp_enqueue_style(
-            'cardifa-admin',
-            CARDIFA_URL . 'Assets/Admin/Css/Admin.css',
-            [],
-            CARDIFA_VERSION
-        );
-    }
-
-    /**
-     * اضافه کردن لینک سریع تنظیمات در لیست افزونه‌ها
-     *
-     * @param array $links
-     * @return array
-     * @since 1.0.0
-     */
-    public function plugin_action_links($links)
-    {
-        $custom_links = [
-            '<a href="' . admin_url('admin.php?page=cardifa-settings') . '">' . __('تنظیمات', 'cardifa') . '</a>',
-        ];
-        return array_merge($custom_links, $links);
-    }
-
-    /**
      * چک کردن فعال بودن المنتور
      *
      * @return bool
      * @since 1.0.0
      */
-    private function check_elementor()
+    private function check_elementor(): bool
     {
-        if (!did_action('elementor/loaded')) {
+        if (! did_action('elementor/loaded')) {
             add_action('admin_notices', function () {
                 echo '<div class="notice notice-warning is-dismissible"><p>';
                 echo esc_html__('کاردیفا نیاز به نصب و فعال‌سازی افزونه المنتور دارد.', 'cardifa');
