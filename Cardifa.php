@@ -12,26 +12,26 @@
  * Domain Path: /lang
  *
  * @package Cardifa
- * @since   1.0.0
+ * @since 1.0.0
  */
 
 defined('ABSPATH') || exit;
 
-// ─── ثابت‌ها ───────────────────────────────────
+// ─── تعریف ثابت‌های اصلی ───────────────────────────
 if (! defined('CARDIFA_VERSION')) {
-    define('CARDIFA_VERSION', '3.0.0');
+    define('CARDIFA_VERSION', '3.0.0'); // ورژن اصلی پلاگین
 }
 if (! defined('CARDIFA_FILE')) {
     define('CARDIFA_FILE', __FILE__);
 }
 if (! defined('CARDIFA_PATH')) {
-    define('CARDIFA_PATH', plugin_dir_path(__FILE__));
+    define('CARDIFA_PATH', plugin_dir_path(__FILE__)); // دقت کن PATH باشه نه DIR
 }
 if (! defined('CARDIFA_URL')) {
     define('CARDIFA_URL', plugin_dir_url(__FILE__));
 }
 
-// ─── ترجمه‌ها ───────────────────────────────────
+// ─── بارگذاری ترجمه‌ها ───────────────────────────────
 add_action('plugins_loaded', function() {
     load_plugin_textdomain(
         'cardifa',
@@ -40,30 +40,38 @@ add_action('plugins_loaded', function() {
     );
 });
 
-// ─── Autoload همه کلاس‌های Src/ براساس PSR-4 ──────
+// ─── PSR-4 Autoloader برای کلاس‌های Src/ ───────────────
 spl_autoload_register(function($class) {
     // فقط نِیم‌اسپیس Cardifa\
     if (strpos($class, 'Cardifa\\') !== 0) {
         return;
     }
     // Cardifa\Foo\Bar => Src/Foo/Bar.php
-    $rel = str_replace('\\', '/', substr($class, strlen('Cardifa\\')));
-    $file = CARDIFA_PATH . 'Src/' . $rel . '.php';
+    $relative = str_replace('\\', '/', substr($class, strlen('Cardifa\\')));
+    $file = CARDIFA_PATH . 'Src/' . $relative . '.php';
     if (file_exists($file)) {
         require_once $file;
     }
 });
 
-// ─── فانکشن‌های Activation/Deactivation (بدون کلاس) ─
+// ─── فانکشن‌های Activation/Deactivation (بدون کلاس) ────
 require_once CARDIFA_PATH . 'Includes/Activation.php';
 require_once CARDIFA_PATH . 'Includes/Deactivation.php';
 
-// ─── هوک‌های نصب/حذف ───────────────────────────────
+// ─── هوک‌های نصب/حذف ─────────────────────────────────
 register_activation_hook( CARDIFA_FILE,   'cardifa_activate_plugin' );
-register_deactivation_hook(CARDIFA_FILE, 'cardifa_deactivate_plugin' );
+register_deactivation_hook( CARDIFA_FILE, 'cardifa_deactivate_plugin' );
 
-// ─── بوت‌کردن اصلی افزونه (Admin / Public / Elementor) ─
-add_action('init', function() {
-    // متد run() در Application همه‌ی Bootstrap ها رو register می‌کنه
-    \Cardifa\Core\Application::getInstance()->run();
-}, 0);
+// ─── بوت کردن اصلی افزونه ──────────────────────────────
+function cardifa_init() {
+    // ← اینجا متد init() رو صدا می‌زنیم
+    \Cardifa\Core\Application::getInstance()->init();
+}
+add_action('init', 'cardifa_init', 0);
+
+// ─── لود خودکار ویجت‌های المنتور ──────────────────────
+add_action('elementor/widgets/widgets_registered', function() {
+    foreach (glob(CARDIFA_PATH . 'Src/Elementor/Widgets/*.php') as $widget) {
+        require_once $widget;
+    }
+}, 5);
