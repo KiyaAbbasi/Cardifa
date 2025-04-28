@@ -12,101 +12,47 @@
  * @package         Cardifa\Bootstrap
  */
 
-namespace Cardifa\Src\Bootstrap;
+namespace Cardifa\Bootstrap;
 
-use Cardifa\Src\Services\HookManager;
-use Cardifa\Src\Services\AssetManager;
+use Cardifa\Services\AssetManager;
 
 defined('ABSPATH') || exit;
 
-/**
- * کلاس راه‌اندازی بخش عمومی کاردیفا
- *
- * @since      1.0.0
- * @package    Cardifa\Bootstrap
- */
 class Public_Bootstrap
 {
     /**
-     * @var HookManager
-     */
-    private $hook_manager;
-
-    /**
-     * @var AssetManager
-     */
-    private $asset_manager;
-
-    /**
-     * راه‌اندازی عمومی
+     * ثبت هوک‌های عمومی
      *
      * @since 1.0.0
      */
-    
-    public function register()
+    public static function register(): void
     {
-        $this->hook_manager = new \Cardifa\Src\Services\HookManager();
-        $this->asset_manager = new \Cardifa\Src\Services\AssetManager();
-
-        $this->init_hooks();
-        $this->register_shortcodes();
+        add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
+        add_shortcode('cardifa_profile', [__CLASS__, 'render_profile_shortcode']);
     }
-    
+
     /**
-     * مقداردهی اولیه هوک‌ها
+     * enqueue استایل و اسکریپت عمومی
      *
      * @since 1.0.0
      */
-    private function init_hooks()
+    public static function enqueue_assets(): void
     {
-        $this->hook_manager->add_action('wp_enqueue_scripts', [$this->asset_manager, 'load_assets']);
-        $this->hook_manager->add_filter('body_class', [$this, 'add_body_classes']);
+        $am = new AssetManager();
+        $am->load_assets('public');
     }
 
     /**
-     * ثبت شورتکدهای کاردیفا
-     *
-     * @since 1.0.0
-     */
-    private function register_shortcodes()
-    {
-        add_shortcode('cardifa_card', [$this, 'render_card_shortcode']);
-        add_shortcode('cardifa_profile', [$this, 'render_profile_shortcode']);
-    }
-
-    /**
-     * اضافه کردن کلاس به body tag
-     *
-     * @param array $classes
-     * @return array
-     */
-    public function add_body_classes($classes)
-    {
-        $classes[] = 'cardifa-active';
-        return $classes;
-    }
-
-    /**
-     * رندر کردن شورتکد کارت
+     * رندر شورتکد پروفایل
      *
      * @param array $atts
      * @return string
+     * @since 1.0.0
      */
-    public function render_card_shortcode($atts)
+    public static function render_profile_shortcode(array $atts): string
     {
-        // TODO: اینجا خروجی HTML کارت ساخته میشه
-        return '<div class="cardifa-card">' . esc_html__('Cardifa Card Placeholder', 'cardifa') . '</div>';
-    }
-
-    /**
-     * رندر کردن شورتکد پروفایل
-     *
-     * @param array $atts
-     * @return string
-     */
-    public function render_profile_shortcode($atts)
-    {
-        // TODO: اینجا خروجی HTML پروفایل ساخته میشه
-        return '<div class="cardifa-profile">' . esc_html__('Cardifa Profile Placeholder', 'cardifa') . '</div>';
+        ob_start();
+        require CARDIFA_PATH . 'Templates/Public/Card-Template.php';
+        return ob_get_clean();
     }
 }
