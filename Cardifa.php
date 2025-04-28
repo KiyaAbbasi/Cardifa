@@ -58,6 +58,9 @@ spl_autoload_register(function($class) {
 require_once CARDIFA_PATH . 'Includes/Activation.php';
 require_once CARDIFA_PATH . 'Includes/Deactivation.php';
 
+// ─── لود پست تایپ ──────────────────────────────
+require_once CARDIFA_PATH . 'Includes/Post-Types/Cardifa_CPT.php';
+
 // ─── هوک‌های نصب/حذف ─────────────────────────────────
 register_activation_hook( CARDIFA_FILE,   'cardifa_activate_plugin' );
 register_deactivation_hook( CARDIFA_FILE, 'cardifa_deactivate_plugin' );
