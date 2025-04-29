@@ -120,7 +120,7 @@ final class Application
         // ─── بوت‌استرپ ادمین ─────────────────────────────
         (new Admin_Loader());                // لودر کلاس‌های ادمین
         Admin_Bootstrap::register();         // منوها و استایل/اسکریپت ادمین
-
+        require_once CARDIFA_PATH . 'Includes/functions.php'; // لود فانکشن‌ها
         // ─── بوت‌استرپ عمومی ────────────────────────────
         Public_Bootstrap::register();        // شورتکد و Assets عمومی
 
