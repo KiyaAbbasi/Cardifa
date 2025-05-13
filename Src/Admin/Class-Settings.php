@@ -46,7 +46,7 @@ class Class_Settings
         require_once CARDIFA_PATH . 'Src/Helpers/DatetimeHelper.php';
 
         \Cardifa\Admin\Settings\GeneralSettings::register();
-        \Cardifa\Admin\Settings\SMS\SmsSettings::register();
+        \Cardifa\Admin\Settings\SmsSettings::register();
         \Cardifa\Admin\Settings\UsersSettings::register();
         \Cardifa\Admin\Settings\PlansSettings::register();
     }
