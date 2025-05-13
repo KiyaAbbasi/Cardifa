@@ -11,7 +11,7 @@ namespace Cardifa\Admin\Settings;
 use Cardifa\Admin\SMS\SMSHandler;
 use Cardifa\Admin\SMS\ShortcodeHandler;
 
-class SMSSettings
+class SmsSettings
 {
     /**
      * Initialize the SMS settings page.
