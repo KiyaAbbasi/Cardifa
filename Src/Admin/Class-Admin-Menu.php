@@ -156,27 +156,23 @@ class Class_Admin_Menu
         $sorted    = [];
         $remaining = $menu;
     
-        // ۱) بر اساس لیست دلخواه، هر آیتم را دقیقاً match کن
-        foreach ( $desired as $slug ) {
-            // پایه‌ی slug (قبل از هر ? )  
-            $base_slug = strtok( $slug, '?' );
-            foreach ( $remaining as $key => $item ) {
-                // پایه‌ی slug آیتم منو
-                $item_slug = isset($item[2]) ? strtok( $item[2], '?' ) : '';
-                if ( $item_slug === $base_slug ) {
-                    $sorted[]           = $item;
-                    unset( $remaining[$key] );
+        // مرتب‌سازی آیتم‌های منو
+        foreach ($desired as $slug) {
+            foreach ($remaining as $key => $item) {
+                if (isset($item[2]) && strpos($item[2], $slug) !== false) {
+                    $sorted[] = $item;
+                    unset($remaining[$key]);
                     break;
                 }
             }
         }
     
-        // ۲) بقیهٔ منوها را در ادامه اضافه کن (به ترتیب فعلی)
-        foreach ( $remaining as $item ) {
+        // اضافه کردن باقی‌مانده منوها
+        foreach ($remaining as $item) {
             $sorted[] = $item;
         }
     
-        // ۳) جایگزینی $menu
+        // جایگزینی منوی اصلی
         $menu = $sorted;
     }
 
