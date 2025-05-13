@@ -1,6 +1,6 @@
 📘 مستند نهایی افزونه Cardifa Elementor Add-On
 
-/** 
+/**
 Plugin Name: کاردیفا - سازنده کارت ویزیت دیجیتال
 Plugin URI: https://cardifa.link
 Description: افزونه‌ای کامل برای ساخت کارت دیجیتال، لینک بایو، سیستم اشتراک و پنل کاربری با قابلیت ثبت‌نام با شماره موبایل و ویجت‌های حرفه‌ای المنتور.
@@ -8,752 +8,475 @@ Version: 1.0.0
 Author: Kiya Holding
 Author URI: https://kiyaholding.com
 Text Domain: cardifa
-Domain Path: /languages */
-Cardifa
+Domain Path: /languages
 */
-افزونه‌ای کامل برای ساخت کارت دیجیتال، لینک بایو، سیستم اشتراک و پنل کاربری با قابلیت ثبت‌نام با شماره موبایل و ویجت‌های حرفه‌ای المنتور.
-
-1. 🎯 خط‌ قرمز (Must-Have Rules)
-۱. کامنت‌گذاری و DocBlock
-
-هر فایل با DocBlock در بالای فایل شروع می‌شود:
-
-php
-Copy
-Edit
-/**
- * File: <نام فایل>
- * Location: <مسیر نسبی داخل افزونه>
- * Desc: <توضیح کوتاه دربارهٔ مسئولیت فایل>
- */
-همه فانکشن‌ها، کلاس‌ها و متدها با توضیح پارامترها و خروجی‌ها کامنت شوند.
-
-۲. ارسال کاملِ کد
-
-همیشه کل محتوای فایل (نه قطعه‌ای) ارسالی باشد.
-
-۳. ترتیب و نقاط هوک
-
-Traits قبل از هر چیز بارگذاری شوند.
-
-ترتیب در widgets-loader.php:
-
-Trait loading
-
-elementor/init → ثبت دسته‌بندی
-
-elementor/widgets/register (prio 20) → لود خودکار ویجت‌ها
-
-add_filter('elementor/elements/categories',…,999999)
-
-elementor/widgets/register (prio 999999) → حذف ویجت‌های غیرمجاز
-
-۴. ثبت دسته‌بندی‌ها
-
-فقط دو دسته: layout و cardifa (همیشه با یک Priority و آیکون ثابت).
-
-حذف دسته‌های پیشین فقط با Reflection، بدون متدهای قدیمی.
-
-۵. لود خودکار ویجت‌ها
-
-پوشه: src/Elementor/Widgets/
-
-require_once داینامیک بر اساس نام فایل.
-
-نام کلاس: \Cardifa\Elementor\Widgets\<نام فایل بدون .php>
-
-برای ثبت ویجت‌ها از register() (یا قدیمی‌تر register_widget_type()).
-
-۶. حذف ویجت‌های غیرمجاز
-
-فقط در حالت ویرایش (Edit Mode) و فقط در CPT cardifa.
-
-هیچ‌گاه در AJAX یا محیط admin اجرا نشود.
-
-فقط دسته‌های cardifa و layout مجازند.
-
-۷. استایل پنل و اسکریپت‌ها
-
-editor-style.php و editor-scripts.php فقط در ویرایش CPT cardifa enqueue شوند.
-
-شناسه‌ها و سلکتورها دقیقا مطابق با المنتور باشند.
-
-۸. ساختار Traits
-
-همه Traitها در src/Elementor/Traits/ قرار گیرند.
-
-نام فایل برابر نام Trait.
-
-هر Trait متدی مانند register_<something>_controls() داشته باشد.
-
-۹. ساختار ویجت‌ها
-
-هر ویجت در src/Elementor/Widgets/ با:
-
-DocBlock فایل
-
-namespace و use‌های دقیق
-
-متدهای استاندارد: get_name(), get_title(), get_icon(), get_categories()
-
-register_controls() با کامنت‌گذاری
-
-render() برای خروجی HTML
-
-در صورت نیاز content_template()
-
-۱۰. عدم تغییر کد پایه المنتور
-
-فقط از فیلتر و اکشن رسمی + Reflection.
-
-۱۱. موقع نوشتن کد‌ها، اسم فایل‌ها و مسیر قرار گیری فایل رو حتما دقیق و درست بگو بهم و جوری ای موارد رو بنویس که بتونم کپی کنم
-
-2. 🧩 لیست نهایی Traits
-
-شماره	فایل (Location: src/Elementor/Traits/)	مسئولیت کلی
-1	BasicCardifaElement.php	متدهای پایه Widget؛ بارگذاری فونت/آیکون‌های اختصاصی
-2	BasicStyleTrait.php	گروه کنترل‌های Typography, Color, Background, Border, Box-​Shadow…
-3	DimensionTrait.php	Width/Height, Min/Max, Padding, Margin (کاملا Responsive)
-4	IconTrait.php	انتخاب آیکون (Elementor Icons/SVG), Position, Size, Color, Hover
-5	RepeaterTrait.php	Advanced Repeater (add/remove/sort آیتم‌های داینامیک)
-6	ResponsiveTrait.php	مخفی/نمایش در Desktop/Tablet/Mobile + تنظیمات جداگانه
-7	SliderTrait.php	تنظیمات عمومی اسلایدر (loop, autoplay, speed…)
-8	ImageSliderTrait.php	کنترل‌های thumbnails, lazyLoad, effect, aspectRatio
-9	VideoSliderTrait.php	تنظیمات autoplay/mute/loopVideo, fallbackImage, showControls
-10	CarouselTrait.php	slidesPerView, slidesPerGroup, centeredSlides, spaceBetween
-11	SwiperJsTrait.php	breakpoints, direction, touchRatio, freeMode
-12	SliderNavigationTrait.php	استایل/موقعیت Next/Prev, pagination bullets
-13	SliderAnimationTrait.php	انتقال حرفه‌ای: fade, cube, flip, coverflow + depth/rotate
-14	TypographyTrait.php	line-height, letter-spacing, word-spacing, decoration
-15	BackgroundTrait.php	classic, gradient, video/mp4, overlay, gradientStop, blendMode
-16	BorderTrait.php	width, style, color + تنظیمات hover
-17	BoxShadowTrait.php	offset, blur, spread, color, inset
-18	TextShadowTrait.php	offset, blur, color
-19	FilterTrait.php	blur, brightness, contrast, saturate, hue-rotate, invert, sepia
-20	TransitionTrait.php	duration, delay, property, timing-function
-21	PositionTrait.php	static, relative, absolute, fixed; top/right/bottom/left, z-index
-22	OverflowTrait.php	visible, hidden, scroll, auto
-23	TransformTrait.php	scale, rotate, translate, skew
-24	HoverAnimationTrait.php	pulse, bounce, flash, swing و غیره
-25	EntranceAnimationTrait.php	fadeIn, slideIn, zoomIn و غیره
-26	ScrollViewTrait.php	scrolling container, height, overflow
-27	ShapeDividerTrait.php	curve, tilt, waves و غیره
-28	BlendModeTrait.php	normal, multiply, screen, overlay و غیره
-29	CustomCSSTrait.php	افزودن CSS دلخواه برای هر ویجت
-30	GlobalSettingsTrait.php	فراخوانی تنظیمات سراسری (Fonts, Colors, Breakpoints)
-31	DynamicTagsTrait.php	پشتیبانی از Dynamic Tags
-32	FormValidationTrait.php	قواعد اعتبارسنجی فرم‌ها
-33	AjaxTrait.php	ابزارک‌های Ajax-دار (جستجوی زنده، فیلترینگ)
-34	AccessibilityTrait.php	ARIA attributes و WCAG compliance
-35	RoleCapabilityTrait.php	نمایش/مخفی‌سازی بر اساس نقش کاربر
-36	DevToolsTrait.php	متدهای دیباگ و profiling
-37	LazyLoadTrait.php	Lazy loading برای تصاویر/ویدیو/منابع
-38	GridLayoutTrait.php	تنظیمات Grid (ستون‌ها، فاصله)
-39	ParallaxEffectTrait.php	افکت پارالاکس برای پس‌زمینه یا عناصر
-40	StickyTrait.php	تنظیم چسبندگی (Sticky) برای عناصر
-41	ConditionalLogicTrait.php	نمایش/مخفی بر اساس شرط دلخواه
-42	SEOOptimizationTrait.php	alt, meta, schema برای بهبود SEO
-43	MultiLanguageTrait.php	Integration با WPML/Polylang
-💡 پیشنهاد کردم 7 تا Trait جدید اضافه کنیم تا روزبه‌روز افزونه قدرتمندتر و آینده‌نگرتر باشه.
-
-3. 🖼️ لیست نهایی Widgets
-
-slug	کلاس PHP	توضیح کوتاه
-cardifa_advanced-accordion	Advanced_Accordion	آکوردئون پیشرفته با تنظیمات کامل
-cardifa_advanced-heading	Advanced_Heading	تیتر پیشرفته با افکت‌های انیمیشن و استایل‌های پیچیده
-cardifa_advanced-iconbox	Advanced_IconBox	جعبه آیکون قابل تنظیم
-cardifa_advanced-tabs	Advanced_Tabs	تب‌های پیشرفته با طرح‌بندی دلخواه
-cardifa_animated-counter	Animated_Counter	شمارنده عددی با افکت انیمیشن
-cardifa_audio-player	Audio_Player	پخش‌کننده صوتی با کنترل‌های پیشرفته
-cardifa_blog-grid	Blog_Grid	نمایش پست‌ها به صورت شبکه یا لیست
-cardifa_button	Button	دکمه استاندارد المنتور با امکانات اضافه
-cardifa_call-to-action	Call_To_Action	دکمه CTA با متن و استایل‌های جذاب
-cardifa_carousel	Carousel	اسلایدر محتوا با Navigation و Pagination
-cardifa_contact-card	Contact_Card	کارت اطلاعات تماس با آیکون و لینک
-cardifa_countdown-bar	Countdown_Bar	نوار شمارنده معکوس برای تخفیفات یا رویدادها
-cardifa_divider	Divider	جداکننده با طرح‌ها و رنگ‌های متنوع
-cardifa_dynamic-slider	Dynamic_Slider	اسلایدر داینامیک با محتوای سفارشی
-cardifa_faq	FAQ	سوالات متداول با آکوردئون داخلی
-cardifa_feature-box	Feature_Box	نمایش ویژگی‌ها یا خدمات با آیکون و متن
-cardifa_form	Form_Widget	فرم تماس با اعتبارسنجی و استایل
-cardifa_google-map	Google_Map	نقشه گوگل با Marker و تنظیمات API
-cardifa_icon-list	Icon_List	لیست آیکون‌‌دار با طرح‌بندی‌های مختلف
-cardifa_image-gallery	Image_Gallery	گالری تصاویر با Lightbox و Masonry
-cardifa_image-hotspot	Image_Hotspot	نقاط قابل کلیک روی تصاویر
-cardifa_image	Image_Widget	تصویر با Caption, Overlay, لینک
-cardifa_lottie-animation	Lottie_Animation	نمایش انیمیشن‌های Lottie
-cardifa_name	Name_Widget	نمایش نام نویسنده یا متن دلخواه
-cardifa_pie-chart	Pie_Chart	نمودار دایره‌ای با تنظیمات
-cardifa_pricing-table	Pricing_Table	جدول قیمت‌گذاری پیشرفته
-cardifa_progress-bar	Progress_Bar	نمایش پیشرفت با نوار قابل تنظیم
-cardifa_social	Social_Widget	آیکون‌های شبکه‌های اجتماعی با استایل‌های hover
-cardifa_spacer	Spacer_Widget	ایجاد فاصله دلخواه در طرح‌بندی
-cardifa_team-member	Team_Member	نمایش اعضای تیم با عکس، نام و شرح
-cardifa_testimonials	Testimonials	اسلایدر نظرات مشتریان با عکس و متن
-cardifa_timer	Timer_Widget	شمارنده معکوس برای رویدادها
-cardifa_video-gallery	Video_Gallery	گالری ویدیو با Lightbox
-cardifa_video-player	Video_Player	پخش‌کننده ویدیو با تنظیمات پیشرفته
-cardifa_weather	Weather_Widget	وضعیت آب‌وهوا بر اساس موقعیت
-cardifa_woocommerce-products	Woocommerce_Products	نمایش محصولات ووکامرس (شبکه/اسلایدر)
-cardifa_woocommerce-slider	Woocommerce_Slider	اسلایدر محصولات ووکامرس
-cardifa_test-widget	Test_Widget	ویجت تست ساده برای بررسی عملکرد
-🔮 این 36 ویجت پایه هستن؛ هر وقت آماده بودیم می‌تونیم pro-ها (مثل Form Builder Extended و Timeline و…) رو فاز بعدی بندازیم.
-
-4. 🚀 گام‌های بعدی
-بازبینی نهایی خطوط قرمز و تأیید مستند قواعد.
-
-نهایی‌سازی Traits (۱–۴۳) و وب‌کامیت اسکلت پوشه‌ها.
-
-ایمپورت خودکار ویجت‌ها و اجرای تست Test_Widget.
-
-نوشتن نمونه ویجت ساده برای تست بارگذاری همه Traitها.
-
-سپس میریم سراغ جزئیات هر ویجت: کنترل‌ها، استایل‌ها و رندر نهایی.
-
-اگه نکته‌ی دیگه‌ای مد نظرت هست یا چیزی میخوای اضافه کنم، همین‌جا خبرم کن تا بِترکونیم! 🚀
-
-
-
-
-
-
-
-You said:
-ببین باید تمام پیام هایی که دادم رو ترکیب و بازنویسی کنی تو یه پیام و هیچ چیزی حذف نکنی ساختار پوشه ها کامل و دقیق مشخص باشه ویجت تست رو از لیست حذف کنی ساختار ویجت ها و امکاناتشون کامل و دقیق مشخص باشه برای لیست ها حتما شماره گذاری داشته باشه میخخوام همه پیام های منو تو یک پیام دقیق و منسجم بنویسی جوری که یه فردی که هیچی از وردپرس و افزونه نمیدونه بتونه این فایل رو بخونه و کامل متوجه روند ماجرا بشه از توصعه هایی که قراره بدن بدیم از فاز های اجرایی پروژه از امکانات کلی پروژه و همه این پیام هایی که به صورت پراکنده بود رو شامل باشه متن تو مرسی 
-
-
-ChatGPT said:
-در ادامه تمام مطالبی را که فرستاده‌اید—از «خط‌قرمزها» و ساختار پوشه‌ها تا Traits، ویجت‌ها، امکانات کلی و فازهای اجرایی—در یک متن دقیق، منسجم و کاملاً قابل‌فهم برای کسانی که آشنایی قبلی با وردپرس و افزونه‌نویسی ندارند گردآوری کرده‌ام. هیچ چیزی از قلم نیفتاده و ترتیب منطقی رعایت شده است. ویجت تست از لیست حذف شده و همه لیست‌ها شماره‌گذاری دارند. لطفاً بازنگری کنید و اگر نکته‌ای باقی مانده، اطلاع دهید.
-
-Cardifa Elementor Add-On Specification
-نام افزونه: Cardifa
-نسخه: 1.0.0
-تاریخ: 2025-04-23
-تیم نگارش: تیم توسعه کاردیفا
 
 1. 🎯 معرفی کلی
-این افزونه مجموعه‌ای از قابلیت‌ها، ویجت‌ها و ابزارک‌های سفارشی برای صفحه‌ساز Elementor است که:
+   افزونه Cardifa یک سیستم کامل مدیریت لینک بیو و کارت ویزیت دیجیتال است که به صورت کامل با صفحه‌ساز المنتور ادغام شده است. این افزونه:
 
-یک دسته‌بندی اختصاصی (cardifa) به پنل ویجت‌های Elementor اضافه می‌کند.
+* دارای سیستم عضویت با موبایل و رمز یک‌بار مصرف (OTP)
+* امکان ساخت کارت حرفه‌ای با Drag & Drop
+* تنظیمات کامل پلن‌ها و اشتراک‌ها
+* پنل مدیریت کاربر و مدیر
+* ویجت‌های اختصاصی المنتور با بیش از 60 Trait سفارشی برای طراحی بی‌نهایت
 
-فقط ویجت‌های مربوط به دو دسته‌بندی layout و cardifa را در حالت ویرایش برای نوع نوشتهٔ سفارشی (CPT) cardifa نمایش می‌دهد.
+2. 🔒 خط قرمزها و اصول اکید اجرایی (Must-Have Rules)
 
-بیش از ۴۰ Trait (ویژگی‌های مشترک) آماده برای کنترل‌های ظاهری و رفتاری ارائه می‌دهد.
+* ❌ هیچ فایلی بدون تأیید نباید حذف یا بازنویسی شود
+* ❌ هیچ فانکشنی بدون بررسی و هماهنگی نباید تغییر یابد یا حذف شود
+* ❌ هیچ کدی نباید بدون کامنت کامل و DocBlock باشد
+* ❌ ساختار پوشه‌ها و نام‌گذاری باید مطابق PascalCase باشد
+* ❌ ساختار طراحی و رنگ‌بندی نباید بدون تأیید نهایی تغییر کند (مرجع: Figma)
+* ❌ ارسال فقط بخشی از کد یک فایل = ممنوع کامل
+* ✅ همه فایل‌ها باید DocBlock فارسی استاندارد داشته باشند:
 
-لیستی از ویجت‌های حرفه‌ای قابل‌گسترش را به‌صورت داینامیک شناسایی و ثبت می‌کند.
-
-توسعه‌دهنده را با معماری منظم، مستندسازی کامل و مراحل مشخص برای توسعه، تست و انتشار همراهی می‌کند.
-
-2. 🚫 خط‌قرمزها (Must-Have Rules)
-در تمام فایل‌ها و فرآیند توسعه اجازه هیچ تخطی از این اصول را نداریم:
-
-کامنت‌گذاری و DocBlock
-
-هر فایل باید با یک DocBlock در بالای فایل آغاز شود:
-
-php
-Copy
-Edit
 /**
- * File: <نام فایل>
- * Location: <مسیر نسبی داخل افزونه>
- * Desc: <توضیح کوتاه دربارهٔ مسئولیت فایل>
+ * File: FileName.php
+ * Location: مسیر دقیق فایل در پروژه
+ * Description: توضیح کلی عملکرد فایل
  */
-همه کلاس‌ها، متدها و فانکشن‌ها باید با کامنت توضیحی همراه باشند (پارامترها، نوع و خروجی).
 
-ارسال کاملِ کد
+- ✅ نام تمام کلاس‌ها باید با پیشوند مشخص باشند و مسیر آنها مشخص باشد (مثلاً Class-Settings.php)
+- ✅ هر Trait باید دقیقاً برابر نام فایلش باشد و حداقل یک متد با نام register\_\* داشته باشد
+- ✅ همه مسیرهای `require_once` باید بررسی و به‌روزرسانی شوند هنگام تغییر نام یا مسیر
 
-همیشه کل محتوای فایل (نه قطعه‌ای) ارسال شود تا چیزی جا نیفتد.
+3. 🗂️ ساختار دقیق فایل‌ها و پوشه‌ها (فولدربندی کامل پروژه)
+   📂 این بخش توسط Kiya به صورت دستی جایگزین می‌شود. لطفاً ساختار فعلی پروژه GitHub را دقیقاً اینجا قرار دهید.
 
-ترتیب بارگذاری و نقاط هوک
 
-تمام Traits پیش از هر چیز بارگذاری شوند.
+Cardifa/
+├── Assets/
+│   ├── Admin/
+│   │   ├── Css/
+│   │   │   ├── Cardifa-Settings.css
+│   │   │   ├── Hi-Icon.css
+│   │   ├── Js/
+│   │   │   ├── Settings.js
+│   │   │   ├── Cardifa-Datetime.js
+│   │   ├── Img/
+│   │       ├── Cardifa-Admin-Logo.svg
+│   ├── Elementor/
+│   │   ├── Css/
+│   │   │   ├── Editor.css
+│   │   ├── Js/
+│   │       ├── Editor.js
+│   ├── Fonts/
+│   │   ├── Font-Face.css
+│   │   ├── YekanBakh/
+│   │   │   ├── YekanBakh-Bold.woff2
+│   │   │   ├── YekanBakh-ExtraBlack.woff2
+│   │   │   ├── YekanBakh-Medium.woff2
+│   │   │   ├── YekanBakh-Regular.woff2
+│   │   ├── Hi-Icone/
+│   │   │   ├── Css/
+│   │   │   │   ├── animation.css
+│   │   │   │   ├── fa-hi-icone-codes.css
+│   │   │   │   ├── fa-hi-icone-embedded.css
+│   │   │   │   ├── fa-hi-icone-ie7-codes.css
+│   │   │   │   ├── fa-hi-icone-ie7.css
+│   │   │   │   ├── fa-hi-icone.css
+│   │   │   ├── Font/
+│   │   │       ├── fa-hi-icone.eot
+│   │   │       ├── fa-hi-icone.svg
+│   │   │       ├── fa-hi-icone.ttf
+│   │   │       ├── fa-hi-icone.woff
+│   │   │       ├── fa-hi-icone.woff2
+│   ├── Public/
+│   │   ├── Css/
+│   │   │   ├── Public-Style.css
+│   │   ├── Js/
+│   │       ├── Public-Script.js
 
-در widgets-loader.php دقیقا به ترتیب زیر اجرا شود:
+├── Docs/
+│   ├── Composer.json
+│   ├── Manifest.md
+│   ├── README.md
+│   ├── Package.json
 
-بارگذاری Traitها
-
-elementor/init → ثبت دسته‌بندی‌ها
-
-elementor/widgets/register (اولویت 20) → بارگذاری خودکار ویجت‌ها
-
-add_filter('elementor/elements/categories', …, 999999) → فیلتر نهایی دسته‌ها
-
-elementor/widgets/register (اولویت 999999) → حذف ویجت‌های غیرمجاز
-
-ثبت دسته‌بندی‌ها
-
-حتماً دسته‌های layout و cardifa با همان Priority و آیکون مشخص ثبت شوند.
-
-حذف سایر دسته‌ها فقط با Reflection انجام شود (بدون متدهای قدیمی).
-
-لود خودکار ویجت‌ها
-
-پوشه: src/Elementor/Widgets/
-
-فایل‌ها به‌صورت داینامیک require_once شوند.
-
-نام کلاس ویجت: \Cardifa\Elementor\Widgets\<نام فایل بدون .php>
-
-برای ثبت از متد register() یا (نسخه‌های قدیمی‌تر) register_widget_type() استفاده شود.
-
-حذف ویجت‌های غیرمجاز
-
-فقط در حالت ویرایش (Edit Mode) و فقط در CPT cardifa.
-
-هرگز در AJAX یا محیط عمومی Admin اجرا نشود.
-
-تنها دسته‌های مجاز: layout و cardifa.
-
-استایل پنل و اسکریپت‌ها
-
-editor-style.php و editor-scripts.php فقط در ویرایش CPT cardifa enqueue شوند.
-
-شناسه‌ها و سلکتورهای CSS دقیقاً مطابق با ساختار CSS/JS المنتور باشند.
-
-ساختار Traits
-
-همه Traitها در src/Elementor/Traits/ قرار گیرند.
-
-نام فایل و نام Trait کاملاً هم‌خوانی داشته باشند.
-
-هر Trait حداقل یک متد register_<نوع کنترل>_controls() داشته باشد.
-
-ساختار ویجت‌ها
-
-هر ویجت در src/Elementor/Widgets/ شامل:
-
-DocBlock فایل
-
-خط namespace Cardifa\Elementor\Widgets;
-
-use دقیق کلاس‌های Widget_Base, Controls_Manager و Traitهای لازم
-
-متدهای استاندارد:
-
-get_name(), get_title(), get_icon(), get_categories()
-
-register_controls() با کامنت‌بندی
-
-render() برای خروجی HTML
-
-در صورت نیاز: content_template() برای پیش‌نمایش JS
-
-عدم تغییر کد پایه المنتور
-
-فقط از فیلتر و اکشن رسمی API المنتور و Reflection استفاده شود؛ هیچ هک یا ویرایش مستقیم.
-
-cardifa/
-├── cardifa.php
-├── uninstall.php
-├── composer.json
-├── package.json
-├── README.md
-├── manifest.md
-│
-├── assets/
-│   ├── admin/
-│   │   ├── css/
-│   │   │   └── Admin.css
-│   │   └── js/
-│   │       └── Settings.js
-│   ├── elementor/
-│   │   ├── css/
-│   │   │   └── Editor.css
-│   │   └── js/
-│   │       └── Editor.js
-│   ├── public/
-│   │   ├── css/
-│   │   │   └── Public-Style.css
-│   │   └── js/
-│   │       └── Public-Script.js
-│   ├── fonts/
-│   │   ├── Fontello/
-│   │   │   ├── css/
-│   │   │   ├── font/
-│   │   │   ├── config.json
-│   │   │   ├── demo.html
-│   │   │   └── README.txt
-│   │   └── YekanBakh/
-│   │       ├── YekanBakh.css
-│   │       ├── YekanBakh-Bold.otf / ttf / woff / woff2
-│   │       ├── YekanBakh-ExtraBlack.otf / ttf / woff / woff2
-│   │       └── YekanBakh-Regular.otf / ttf / woff / woff2
-│
-├── includes/
-│   ├── ajax/
-│   │   ├── Form_Ajax.php (خالی)
-│   │   └── Payment_Ajax.php (خالی)
-│   ├── helpers/
-│   │   ├── Security.php (خالی)
-│   │   └── Utilities.php (خالی)
-│   ├── post-types/
-│   │   └── Cardifa_CPT.php (خالی)
-│   ├── taxonomies/
-│   │   └── Card_Categories.php (خالی)
+├── Includes/
 │   ├── Activation.php
 │   ├── Custom-Post-Types.php
 │   ├── Deactivation.php
 │   ├── Functions.php
 │   ├── Meta-Boxes.php
 │   ├── Roles-Capabilities.php
-│   └── Taxonomies.php
-│
-├── lang/
+│   ├── Taxonomies.php
+│   ├── Ajax/
+│   │   ├── Form_Ajax.php
+│   │   ├── Payment_Ajax.php
+│   ├── Helpers/
+│   │   ├── Security.php
+│   │   ├── Utilities.php
+│   ├── Taxonomies/
+│   │   ├── Card_Categories.php
+
+├── Lang/
+│   ├── cardifa-fa_IR.mo
 │   ├── cardifa-fa_IR.po
-│   └── cardifa-fa_IR.mo
-│
-├── templates/
-│   ├── admin/
-│   │   └── Settings-Page.php (خالی)
-│   ├── elementor/
-│   │   └── Card-Template.php (خالی)
-│   ├── public/
-│   │   └── Card-Template.php (خالی)
-│   ├── shortcodes/
-│   │   └── Profile.php (خالی)
-│   └── widgets/
-│       └── Widget-Template.php (خالی)
-│
-├── vendor/ (خالی - مدیریت شده توسط Composer)
-│
-├── src/
+
+├── Src/
 │   ├── Admin/
-│   │   ├── Admin_Assets.php
-│   │   ├── Admin_Menu.php
-│   │   └── Admin_Settings.php
+│   │   ├── Class-Admin-Menu.php
+│   │   ├── Class-Settings.php
+│   │   ├── Settings/
+│   │   │   ├── General_Settings.php
+│   │   │   ├── Sms_Settings.php
+│   │   │   ├── Users_Settings.php
+│   │   │   ├── Plans_Settings.php
 │   ├── API/
 │   │   ├── Ajax_Handler.php
 │   │   ├── Class-Rest-Endpoints.php
-│   │   └── Rest_Api.php
+│   │   ├── Rest_Api.php
 │   ├── Bootstrap/
-│   │   ├── Admin.php
-│   │   ├── Elementor.php
-│   │   └── Public.php
+│   │   ├── Elementor_Bootstrap.php
+│   │   ├── Public_Bootstrap.php
 │   ├── Core/
 │   │   ├── Application.php
-│   │   └── Elementor/
-│   │       └── Editor/
-│   │           ├── Editor-Style.php
-│   │           ├── Elementor-Category.php
-│   │           └── Scripts.php
+│   │   ├── GlobalAssets.php
+│   │   ├── Elementor/
+│   │   │   ├── Editor/
+│   │   │   │   ├── Editor-Style.php
+│   │   │   │   ├── Elementor-Category.php
+│   │   │   │   ├── Scripts.php
+│   ├── Elementor/
+│   │   ├── widgets-loader.php
+│   │   ├── Core/
+│   │   │   ├── Assets.php
+│   │   │   ├── Icons.php
+│   │   │   ├── Utilities.php
+│   │   ├── Traits/
+│   │   │   ├── AccessibilityTrait.php
+│   │   │   ├── AjaxTrait.php
+│   │   │   ├── AnimationTrait.php
+│   │   │   ├── APIIntegrationTrait.php
+│   │   │   ├── BackgroundTrait.php
+│   │   │   ├── BasicCardifaElement.php
+│   │   │   ├── BasicStyleTrait.php
+│   │   │   ├── BlendModeTrait.php
+│   │   │   ├── BorderAndShadowTrait.php
+│   │   │   ├── BorderTrait.php
+│   │   │   ├── BoxShadowTrait.php
+│   │   │   ├── CacheManagementTrait.php
+│   │   │   ├── CarouselTrait.php
+│   │   │   ├── ConditionalLogicTrait.php
+│   │   │   ├── CustomCSSControlTrait.php
+│   │   │   ├── DataBindingTrait.php
+│   │   │   ├── DataExportTrait.php
+│   │   │   ├── DevToolsTrait.php
+│   │   │   ├── DimensionTrait.php
+│   │   │   ├── DynamicTagsTrait.php
+│   │   │   ├── EntranceAnimationTrait.php
+│   │   │   ├── ErrorHandlingTrait.php
+│   │   │   ├── EventTrackingTrait.php
+│   │   │   ├── FilterTrait.php
+│   │   │   ├── FlexLayoutTrait.php
+│   │   │   ├── FormValidationTrait.php
+│   │   │   ├── GlobalSettingsTrait.php
+│   │   │   ├── GridLayoutTrait.php
+│   │   │   ├── HoverAnimationTrait.php
+│   │   │   ├── HoverEffectTrait.php
+│   │   │   ├── IconTrait.php
+│   │   │   ├── ImageSliderTrait.php
+│   │   │   ├── LazyLoadTrait.php
+│   │   │   ├── MultiLanguageTrait.php
+│   │   │   ├── NotificationTrait.php
+│   │   │   ├── OverflowTrait.php
+│   │   │   ├── ParallaxEffectTrait.php
+│   │   │   ├── PaymentGatewayTrait.php
+│   │   │   ├── PerformanceOptimizationTrait.php
+│   │   │   ├── PositionTrait.php
+│   │   │   ├── RepeaterTrait.php
+│   │   │   ├── ResponsiveTrait.php
+│   │   │   ├── ResponsiveVisibilityTrait.php
+│   │   │   ├── RoleCapabilityTrait.php
+│   │   │   ├── ScrollViewTrait.php
+│   │   │   ├── SEOOptimizationTrait.php
+│   │   │   ├── ShapeDividerTrait.php
+│   │   │   ├── SliderAnimationTrait.php
+│   │   │   ├── SliderNavigationTrait.php
+│   │   │   ├── SliderTrait.php
+│   │   │   ├── SMSNotificationTrait.php
+│   │   │   ├── SpacingTrait.php
+│   │   │   ├── StickyTrait.php
+│   │   │   ├── SwiperJsTrait.php
+│   │   │   ├── TextShadowTrait.php
+│   │   │   ├── TransformTrait.php
+│   │   │   ├── TransitionTrait.php
+│   │   │   ├── TypographyTrait.php
+│   │   │   ├── UserAuthenticationTrait.php
+│   │   │   ├── VideoSliderTrait.php
+│   │   │   ├── VisibilityTrait.php 
+│   │   ├── Widgets/
+│   │       ├── Test_Widget.php
 │   ├── Helpers/
-│   │   └── Utils.php
+│   │   ├── Utils.php
+│   │   ├── Datetime-Helper.php
 │   ├── Modules/
-│   │   └── Custom_Fonts.php
 │   ├── Public/
 │   │   ├── Class-Shortcodes.php
 │   │   ├── Class-Widgets.php
 │   │   ├── Frontend_Assets.php
 │   │   ├── Shortcodes.php
-│   │   └── User_Panel.php
+│   │   ├── User_Panel.php
 │   ├── Services/
 │   │   ├── AssetManager.php
 │   │   ├── HookManager.php
-│   │   └── SettingsManager.php
-│   └── Elementor/
-│       ├── Core/
-│       │   ├── Assets.php
-│       │   ├── Icons.php
-│       │   └── Utilities.php
-│       ├── Traits/
-│       │   └── (۶۱ فایل Trait کامل)
-│       ├── Widgets/
-│       │   └── (ویجت‌های اصلی پروژه)
-│       └── Widgets-Loader.php
+│   │   ├── SettingsManager.php
 
-4. 🚀 ترتیب بارگذاری و هوک‌ها
-Composer Autoload
+├── Templates/
+│   ├── Admin/
+│   │   ├── Admin-Layout.php
+│   ├── Elementor/
+│   │   ├── Card-Template.php
+│   ├── Public/
+│   │   ├── Card-Template.php
+│   ├── Shortcodes/
+│   │   ├── Profile.php
+│   ├── Widgets/
+│   │   ├── Widget-Template.php
 
-includes/ (activation, deactivation, CPT, taxonomy, roles, AJAX)
+├── Vendor/             ← فقط پوشه (خالی - برای composer)
+├── Uninstall.php
+├── Cardifa.php
 
-بارگذاری اولیه Traitها
 
-add_action('elementor/init', …) → ثبت دو دسته‌بندی layout و cardifa
+4. 🧩 لیست کامل Traits
+   📁 مسیر Traits: Src/Elementor/Traits/
+   تعداد: 61 فایل
 
-add_action('elementor/widgets/register', …, 20) → بارگذاری خودکار ویجت‌ها
+5. BasicCardifaElement.php
 
-add_filter('elementor/elements/categories', …, 999999) → حذف همه جز دو دسته‌بندی مجاز
+6. BasicStyleTrait.php
 
-add_action('elementor/widgets/register', …, 999999) → حذف ویجت‌های غیرمجاز (در Edit Mode & CPT)
+7. DimensionTrait.php
 
-enqueue editor-style.php و editor-scripts.php (فقط در ویرایش CPT)
+8. IconTrait.php
 
-5. 🧩 لیست Traits (ویژگی‌های مشترک)
-BasicCardifaElement.php
+9. RepeaterTrait.php
 
-BasicStyleTrait.php
+10. ResponsiveTrait.php
 
-DimensionTrait.php
+11. SliderTrait.php
 
-IconTrait.php
+12. ImageSliderTrait.php
 
-RepeaterTrait.php
+13. VideoSliderTrait.php
 
-ResponsiveTrait.php
+14. CarouselTrait.php
 
-SliderTrait.php
+15. SwiperJsTrait.php
 
-ImageSliderTrait.php
+16. SliderNavigationTrait.php
 
-VideoSliderTrait.php
+17. SliderAnimationTrait.php
 
-CarouselTrait.php
+18. TypographyTrait.php
 
-SwiperJsTrait.php
+19. BackgroundTrait.php
 
-SliderNavigationTrait.php
+20. BorderTrait.php
 
-SliderAnimationTrait.php
+21. BoxShadowTrait.php
 
-TypographyTrait.php
+22. TextShadowTrait.php
 
-BackgroundTrait.php
+23. FilterTrait.php
 
-BorderTrait.php
+24. TransitionTrait.php
 
-BoxShadowTrait.php
+25. PositionTrait.php
 
-TextShadowTrait.php
+26. OverflowTrait.php
 
-FilterTrait.php
+27. TransformTrait.php
 
-TransitionTrait.php
+28. HoverAnimationTrait.php
 
-PositionTrait.php
+29. EntranceAnimationTrait.php
 
-OverflowTrait.php
+30. ScrollViewTrait.php
 
-TransformTrait.php
+31. ShapeDividerTrait.php
 
-HoverAnimationTrait.php
+32. BlendModeTrait.php
 
-EntranceAnimationTrait.php
+33. CustomCSSControlTrait.php
 
-ScrollViewTrait.php
+34. GlobalSettingsTrait.php
 
-ShapeDividerTrait.php
+35. DynamicTagsTrait.php
 
-BlendModeTrait.php
+36. FormValidationTrait.php
 
-CustomCSSTrait.php
+37. AjaxTrait.php
 
-GlobalSettingsTrait.php
+38. AccessibilityTrait.php
 
-DynamicTagsTrait.php
+39. RoleCapabilityTrait.php
 
-FormValidationTrait.php
+40. DevToolsTrait.php
 
-AjaxTrait.php
+41. LazyLoadTrait.php
 
-AccessibilityTrait.php
+42. GridLayoutTrait.php
 
-RoleCapabilityTrait.php
+43. ParallaxEffectTrait.php
 
-DevToolsTrait.php
+44. StickyTrait.php
 
-LazyLoadTrait.php
+45. ConditionalLogicTrait.php
 
-GridLayoutTrait.php
+46. SEOOptimizationTrait.php
 
-ParallaxEffectTrait.php
+47. MultiLanguageTrait.php
 
-StickyTrait.php
+48. NotificationTrait.php
 
-ConditionalLogicTrait.php
+49. ErrorHandlingTrait.php
 
-SEOOptimizationTrait.php
+50. EventTrackingTrait.php
 
-MultiLanguageTrait.php
+51. CacheManagementTrait.php
 
-6. 🖼️ لیست نهایی Widgets
-cardifa_advanced-accordion → Advanced_Accordion (آکوردئون پیشرفته)
+52. UserAuthenticationTrait.php
 
-cardifa_advanced-heading → Advanced_Heading (تیتر پیشرفته)
+53. PaymentGatewayTrait.php
 
-cardifa_advanced-iconbox → Advanced_IconBox (جعبه آیکون)
+54. PerformanceOptimizationTrait.php
 
-cardifa_advanced-tabs → Advanced_Tabs (تب‌های پیشرفته)
+55. SpacingTrait.php
 
-cardifa_animated-counter → Animated_Counter (شمارنده انیمیشنی)
+56. VisibilityTrait.php
 
-cardifa_audio-player → Audio_Player (پخش‌کننده صوت)
+57. FlexLayoutTrait.php
 
-cardifa_blog-grid → Blog_Grid (شبکه/لیست پست‌ها)
+58. DataBindingTrait.php
 
-cardifa_button → Button (دکمه استاندارد)
+59. DataExportTrait.php
 
-cardifa_call-to-action → Call_To_Action (دکمه CTA)
+60. UtilitiesTrait.php
 
-cardifa_carousel → Carousel (اسلایدر محتوا)
+61. APIIntegrationTrait.php
 
-cardifa_contact-card → Contact_Card (کارت تماس)
+62. SMSNotificationTrait.php
 
-cardifa_countdown-bar → Countdown_Bar (شمارنده معکوس)
 
-cardifa_divider → Divider (جداکننده گرافیکی)
 
-cardifa_dynamic-slider → Dynamic_Slider (اسلایدر داینامیک)
+🧱 لیست کامل Widgets
+📁 مسیر ویجت‌ها: Src/Elementor/Widgets/
 
-cardifa_faq → FAQ (سوالات متداول)
+Slug	                            کلاس PHP	                           توضیح کوتاه
 
-cardifa_feature-box → Feature_Box (ویژگی‌ها/خدمات)
+cardifa_advanced-accordion	        Advanced_Accordion	                   آکوردئون پیشرفته با تنظیمات کامل
+cardifa_advanced-heading            Advanced_Heading                       تیتر پیشرفته با افکت‌های انیمیشن و استایل‌های پیچیده
+cardifa_advanced-iconbox            Advanced_IconBox                       جعبه آیکون قابل تنظیم
+cardifa_advanced-tabs               Advanced_Tabs                          تب‌های پیشرفته با طرح‌بندی دلخواه
+cardifa_animated-counter	        Animated_Counter	                   شمارنده عددی با افکت انیمیشن
+cardifa_audio-player	            Audio_Player	                       پخش‌کننده صوتی با کنترل‌های پیشرفته
+cardifa_blog-grid	                Blog_Grid	                           نمایش پست‌ها به صورت شبکه یا لیست
+cardifa_button	                    Button	                               دکمه استاندارد المنتور با امکانات اضافه
+cardifa_call-to-action	            Call_To_Action	                       دکمه CTA با متن و استایل‌های جذاب
+cardifa_carousel	                Carousel	                           اسلایدر محتوا با Navigation و Pagination
+cardifa_contact-card	            Contact_Card	                       کارت اطلاعات تماس با آیکون و لینک
+cardifa_countdown-bar	            Countdown_Bar	                       نوار شمارنده معکوس برای تخفیفات یا رویدادها
+cardifa_divider	                    Divider	                               جداکننده با طرح‌ها و رنگ‌های متنوع
+cardifa_dynamic-slider	            Dynamic_Slider	                       اسلایدر داینامیک با محتوای سفارشی
+cardifa_faq	                        FAQ	                                   سوالات متداول با آکوردئون داخلی
+cardifa_feature-box	                Feature_Box	                           نمایش ویژگی‌ها یا خدمات با آیکون و متن
+cardifa_form	                    Form_Widget	                           فرم تماس با اعتبارسنجی و استایل
+cardifa_google-map	                Google_Map	                           نقشه گوگل با Marker و تنظیمات API
+cardifa_icon-list	                Icon_List	                           لیست آیکون‌‌دار با طرح‌بندی‌های مختلف
+cardifa_image-gallery	            Image_Gallery                          گالری تصاویر با Lightbox و Masonry
+cardifa_image-hotspot	            Image_Hotspot	                       نقاط قابل کلیک روی تصاویر
+cardifa_image	                    Image_Widget	                       تصویر با Caption, Overlay, لینک
+cardifa_lottie-animation	        Lottie_Animation	                   نمایش انیمیشن‌های Lottie
+cardifa_name	                    Name_Widget	                           نمایش نام نویسنده یا متن دلخواه
+cardifa_pie-chart	                Pie_Chart	                           نمودار دایره‌ای با تنظیمات
+cardifa_pricing-table	            Pricing_Table	                       جدول قیمت‌گذاری پیشرفته
+cardifa_progress-bar	            Progress_Bar	                       نمایش پیشرفت با نوار قابل تنظیم
+cardifa_social	                    Social_Widget	                       آیکون‌های شبکه‌های اجتماعی با استایل‌های hover
+cardifa_spacer	                    Spacer_Widget	                       ایجاد فاصله دلخواه در طرح‌بندی
+cardifa_team-member	                Team_Member	                           نمایش اعضای تیم با عکس، نام و شرح
+cardifa_testimonials	            Testimonials	                       اسلایدر نظرات مشتریان با عکس و متن
+cardifa_timer	                    Timer_Widget	                       شمارنده معکوس برای رویدادها
+cardifa_video-gallery	            Video_Gallery	                       گالری ویدیو با Lightbox
+cardifa_video-player	            Video_Player	                       پخش‌کننده ویدیو با تنظیمات پیشرفته
+cardifa_weather	                    Weather_Widget	                       وضعیت آب‌وهوا بر اساس موقعیت
+cardifa_woocommerce-products	    Woocommerce_Products	               نمایش محصولات ووکامرس (شبکه/اسلایدر)
+cardifa_woocommerce-slider	        Woocommerce_Slider	                   اسلایدر محصولات ووکامرس
 
-cardifa_form → Form_Widget (فرم تماس)
 
-cardifa_google-map → Google_Map (نقشه گوگل)
+🚀 فازهای اجرایی پروژه Cardifa
 
-cardifa_icon-list → Icon_List (لیست آیکون‌دار)
+فاز ۱: زیرساخت و اسکلت پروژه
 
-cardifa_image-gallery → Image_Gallery (گالری تصاویر)
+ایجاد ساختار پوشه‌ها و فایل‌ها مطابق با اصول PSR
 
-cardifa_image-hotspot → Image_Hotspot (نقاط قابل کلیک)
+تنظیم composer برای autoload
 
-cardifa_image → Image_Widget (تصویر با Caption/Overlay)
+ساخت کلاس‌های پایه و بارگذاری اولیه
 
-cardifa_lottie-animation → Lottie_Animation (انیمیشن Lottie)
+فاز ۲: ثبت CPT و Taxonomy
 
-cardifa_name → Name_Widget (نمایش نام/متن)
+ساخت پست تایپ cardifa
 
-cardifa_pie-chart → Pie_Chart (نمودار دایره‌ای)
+ساخت taxonomies اختصاصی برای فیلتر و دسته‌بندی محتوا
 
-cardifa_pricing-table → Pricing_Table (جدول قیمت)
+فاز ۳: پنل ادمین و تنظیمات
 
-cardifa_progress-bar → Progress_Bar (نوار پیشرفت)
+ایجاد منو تنظیمات
 
-cardifa_social → Social_Widget (آیکون‌های شبکه)
+پیاده‌سازی تنظیمات پیامک، پلن‌ها، کاربران
 
-cardifa_spacer → Spacer_Widget (فاصله‌دهنده)
+فاز ۴: طراحی ویجت‌ها و Traits
 
-cardifa_team-member → Team_Member (اعضای تیم)
+ایمپورت Traits (مجموعاً ۶۱ عدد)
 
-cardifa_testimonials → Testimonials (نظرات مشتریان)
+بارگذاری خودکار ویجت‌ها
 
-cardifa_timer → Timer_Widget (شمارنده رویداد)
+طراحی ویجت تست و اجرای تست ساختاری
 
-cardifa_video-gallery → Video_Gallery (گالری ویدیو)
+فاز ۵: پنل کاربری
 
-cardifa_video-player → Video_Player (پخش‌کننده ویدیو)
+پیاده‌سازی داشبورد کاربر
 
-cardifa_weather → Weather_Widget (وضعیت آب‌وهوا)
+دسترسی محدود بر اساس پلن
 
-cardifa_woocommerce-products → Woocommerce_Products (محصولات ووکامرس)
+آمار کلیک، لینک‌ها و مدیریت اطلاعات کارت
 
-cardifa_woocommerce-slider → Woocommerce_Slider (اسلایدر ووکامرس)
+فاز ۶: پیامک و تایید هویت
 
-7. ⚙️ امکانات کلی پروژه
-Custom Post Type & Taxonomy
+اتصال به ملی پیامک و APIs دیگر
 
-ثبت CPT cardifa با پشتیبانی از عنوان، محتوا و تصویر شاخص
+محدودیت ارسال OTP و بررسی امنیتی
 
-تعریف Taxonomyهای سفارشی برای فیلتر و دسته‌بندی لینک‌ها
+فاز ۷: QR Code & Link Sharing
 
-Roles & Capabilities
+ساخت QR به فرمت SVG / PNG
 
-تعریف نقش جدید («ویرایشگر کاردیفا»)
+پنل اشتراک لینک کوتاه و کپی سریع
 
-کنترل دقیق دسترسی به CPT و ابزارک‌ها
+فاز ۸: فروش و اشتراک پیشرفته
 
-یکپارچه‌سازی تجارت
+درگاه پرداخت مستقیم
 
-Subscription پلن‌ها با تاریخ انقضا و تمدید خودکار/دستی
+سیستم کوپن تخفیف
 
-فروش محصولات دیجیتال، درگاه‌های پرداخت (زرین‌پال، پی،…)
+تاریخ انقضا و مدیریت اشتراک
 
-سیستم کوپن و تخفیف
+فاز ۹: نهایی‌سازی و تست کامل
 
-گزارش‌دهی و آمار
+تست یکپارچه عملکرد
 
-آنالیز بازدید و کلیک
+حذف ویجت‌های غیرمجاز در EditMode
 
-گزارش مالی و تراکنش‌ها
+مستندسازی کامل نهایی و تولید README
 
-خروجی CSV برای تحلیل‌های سفارشی
+فاز ۱۰: انتشار نهایی
 
-یکپارچه‌سازی خارجی
+آپلود روی WordPress Repo
 
-Webhooks & REST API
+آماده‌سازی صفحه فرود
 
-اتصال به شبکه‌های اجتماعی، ایمیل مارکتینگ (MailChimp)
+ویدیو آموزشی و نمونه استفاده کاربران
 
-بهینه‌سازی و امنیت
-
-Lazy Load منابع
-
-کش داخلی (Cache)
-
-ضد اسپم/DDOS، nonce و capability checks
-
-سازگار با GDPR
-
-زیرساخت توسعه
-
-PSR-4 Autoload via Composer
-
-PHPUnit برای تست‌های واحد
-
-CI/CD با GitHub Actions
-
-8. 🛠 فازهای اجرایی پروژه
-فاز ۱: زیرساخت & معماری
-
-راه‌اندازی ساختار پوشه‌ها و Composer Autoload
-
-ثبت CPT، Taxonomy، Roles/Capabilities
-
-مستندسازی اولیه (manifest.md)
-
-فاز ۲: مدیریت پلن و اشتراک
-
-CRUD پلن‌ها و سیستم پرداخت پایه
-
-کوپن تخفیف با اعتبارسنجی AJAX
-
-فاز ۳: ویرایشگر کارت دیجیتال MVP
-
-ویرایشگر drag-and-drop کارت
-
-Live Preview + SEO خودکار
-
-فاز ۴: QR Code MVP
-
-تولید SVG/PNG/PDF + بررسی تعداد اسکن
-
-فاز ۵: سیستم پیامک MVP
-
-درگاه ملی‌پیامک + Rate-Limiting
-
-فاز ۶: پنل کاربری پایه
-
-داشبورد اشتراک، مدیریت کارت‌ها و آنالیتیکس
-
-فاز ۷: قابلیت‌های تکمیلی
-
-پلن‌های متنوع‌تر، محدودیت ذخیره‌سازی، صف SMS
-
-فاز ۸: سیستم رزرو وقت
-
-ماژول Booking، تقویم شمسی، هماهنگی Google Calendar
-
-فاز ۹: یکپارچه‌سازی‌های بیشتر
-
-درگاه‌های بیشتر، Zapier، Google Analytics
-
-فاز ۱۰: تست نهایی & انتشار
-
-تست جامع (واحد، یکپارچه، عملکرد)
-
-مستندسازی نهایی و ویدئو آموزشی
-
-انتشار در مخزن رسمی
-
-9. 🚀 گام‌های بعدی
-مرور و تأیید نهایی «خط‌قرمزها».
-
-آماده‌سازی اسکلت پوشه‌ها و Traitها.
-
-تست بارگذاری ویجت‌های پایه (Test_Widget حذف شده—از Minimal_Test_Widget شروع کنید).
-
-پیاده‌سازی اولین ویجت با استفاده از Traits.
-
-هر فاز را مطابق زمان‌بندی پیش ببرید و پس از هر مرحله مستندات را به‌روز کنید.
