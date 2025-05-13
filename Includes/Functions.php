@@ -71,8 +71,3 @@ function cardifa_enqueue_assets() {
 add_action( 'admin_enqueue_scripts', 'cardifa_enqueue_assets', 20 );
 add_action( 'wp_enqueue_scripts',    'cardifa_enqueue_assets' );
 
-/**
- * Define admin menu order:
- * 1. Dashboard, 2. Media, 3. Pages, 4. Cardifa, (submenus), 5. Posts, 6. Comments, then others
- */
-add_action( 'admin_menu', 'cardifa_force_menu_order', 999 );
