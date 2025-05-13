@@ -40,7 +40,7 @@ class Class_Settings
     public static function register_all(): void
     {
         require_once CARDIFA_PATH . 'Src/Admin/Settings/GeneralSettings.php';
-        require_once CARDIFA_PATH . 'Src/Admin/Settings/SMS/SmsSettings.php';
+        require_once CARDIFA_PATH . 'Src/Admin/Settings/SmsSettings.php';
         require_once CARDIFA_PATH . 'Src/Admin/Settings/UsersSettings.php';
         require_once CARDIFA_PATH . 'Src/Admin/Settings/PlansSettings.php';
         require_once CARDIFA_PATH . 'Src/Helpers/DatetimeHelper.php';
