@@ -1,0 +1,23 @@
+/* 📁 تعریف تمام وزن‌های فونت یکان‌بخ */
+
+
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('./YekanBakh/YekanBakh-Regular.woff2') format('woff2');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('./YekanBakh/YekanBakh-Medium.woff2') format('woff2');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('./YekanBakh/YekanBakh-Bold.woff2') format('woff2');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('./YekanBakh/YekanBakh-Heavy.woff2') format('woff2');
+  font-weight: 800;
+}
