@@ -1,117 +1,129 @@
 <?php
 /**
- * File: Sms_Settings.php
- * Description: تنظیمات پیامکی کاردیفا با هماهنگی کامل با طرح فیگما
- *
- * Since:     1.0.1
- * Author:    Kiya Holding
+ * File: SMSSettings.php
+ * Description: تنظیمات سامانه پیامکی مطابق با طرح فیگما
+ * Author: Kiya Holding
+ * Version: 2.0.0
  */
 
 namespace Cardifa\Admin\Settings;
 
-defined('ABSPATH') || exit;
+use Cardifa\Admin\SMS\SMSHandler;
+use Cardifa\Admin\SMS\ShortcodeHandler;
 
-class SmsSettings
+class SMSSettings
 {
     /**
-     * ثبت تنظیمات و سِکشِن تب «پیامکی»
+     * Initialize the SMS settings page.
      */
-    public static function register(): void
+    public static function init(): void
     {
-        register_setting('cardifa_settings_sms', 'cardifa_sms_options');
-        add_settings_section(
-            'sms_section',
+        add_action('admin_menu', [__CLASS__, 'addMenu']);
+        add_action('admin_init', [__CLASS__, 'registerSettings']);
+    }
+
+    /**
+     * Add SMS settings to the WordPress admin menu.
+     */
+    public static function addMenu(): void
+    {
+        add_menu_page(
             __('تنظیمات پیامکی', 'cardifa'),
-            '__return_null',
-            'cardifa_settings_sms'
+            __('پیامک', 'cardifa'),
+            'manage_options',
+            'sms-settings',
+            [__CLASS__, 'renderSettingsPage'],
+            'dashicons-email',
+            25
         );
     }
 
     /**
-     * رندر کامل پنل «تنظیمات پیامکی»
+     * Register SMS settings.
      */
-    public static function render_panel(): void
+    public static function registerSettings(): void
     {
-        $opts = get_option('cardifa_sms_options', []);
+        register_setting('sms_settings_group', 'sms_connection_status');
+        register_setting('sms_settings_group', 'sms_pattern_code');
+        register_setting('sms_settings_group', 'sms_event_messages');
+        register_setting('sms_settings_group', 'sms_shortcodes');
+    }
+
+    /**
+     * Render the SMS settings page.
+     */
+    public static function renderSettingsPage(): void
+    {
+        // Load current settings from the database
+        $connectionStatus = get_option('sms_connection_status', 'not_connected');
+        $patternCode = get_option('sms_pattern_code', '');
+        $eventMessages = get_option('sms_event_messages', []);
+        $shortcodes = get_option('sms_shortcodes', ['{Name}', '{OPT}', '{Expire}']);
+
         ?>
+        <div class="wrap">
+            <h1><?php _e('تنظیمات سامانه پیامکی', 'cardifa'); ?></h1>
+            
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('sms_settings_group');
+                do_settings_sections('sms-settings');
+                ?>
 
-            <!-- وضعیت اتصال به سامانه -->
-            <div class="cardifa-card">
-                <h3><?php esc_html_e('وضعیت اتصال به سامانه', 'cardifa'); ?></h3>
-                <div id="sms-status">
-                    <span id="sms-conn-status" class="cardifa-status-dot"></span>
-                    <span id="sms-conn-text"><?php esc_html_e('در حال بررسی…', 'cardifa'); ?></span>
-                    <strong id="sms-credit">—</strong>
-                    <small><?php esc_html_e('اعتبار پیامک', 'cardifa'); ?></small>
-                </div>
-                <button class="button-primary" id="sms-test-button"><?php esc_html_e('ارسال پیامک تست', 'cardifa'); ?></button>
-            </div>
+                <h2><?php _e('اطلاعات سامانه پیامکی', 'cardifa'); ?></h2>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row"><?php _e('وضعیت اتصال:', 'cardifa'); ?></th>
+                        <td>
+                            <select name="sms_connection_status">
+                                <option value="connected" <?php selected($connectionStatus, 'connected'); ?>><?php _e('متصل', 'cardifa'); ?></option>
+                                <option value="not_connected" <?php selected($connectionStatus, 'not_connected'); ?>><?php _e('قطع اتصال', 'cardifa'); ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row"><?php _e('کد پترن:', 'cardifa'); ?></th>
+                        <td>
+                            <input type="text" name="sms_pattern_code" value="<?php echo esc_attr($patternCode); ?>" />
+                        </td>
+                    </tr>
+                </table>
 
-            <!-- تنظیمات سامانه پیامکی -->
-            <div class="cardifa-card">
-                <h3><?php esc_html_e('اطلاعات اتصال به سامانه', 'cardifa'); ?></h3>
-                <div class="cardifa-fields two-column">
-                    <!-- نام کاربری -->
-                    <div class="cardifa-field">
-                        <label for="sms_username"><?php esc_html_e('نام کاربری', 'cardifa'); ?></label>
-                        <input type="text" id="sms_username" name="cardifa_sms_options[username]" value="<?php echo esc_attr($opts['username'] ?? ''); ?>" />
-                    </div>
+                <h2><?php _e('پیامک‌های رویدادی', 'cardifa'); ?></h2>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row"><?php _e('متن پیامک ثبت‌نام کاربر:', 'cardifa'); ?></th>
+                        <td>
+                            <textarea name="sms_event_messages[register]"><?php echo esc_textarea($eventMessages['register'] ?? ''); ?></textarea>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row"><?php _e('متن پیامک تایید پرداخت:', 'cardifa'); ?></th>
+                        <td>
+                            <textarea name="sms_event_messages[payment]"><?php echo esc_textarea($eventMessages['payment'] ?? ''); ?></textarea>
+                        </td>
+                    </tr>
+                </table>
 
-                    <!-- رمز عبور -->
-                    <div class="cardifa-field">
-                        <label for="sms_password"><?php esc_html_e('رمز عبور', 'cardifa'); ?></label>
-                        <input type="password" id="sms_password" name="cardifa_sms_options[password]" value="<?php echo esc_attr($opts['password'] ?? ''); ?>" />
-                    </div>
+                <h2><?php _e('کدهای کوتاه', 'cardifa'); ?></h2>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row"><?php _e('لیست کدهای کوتاه:', 'cardifa'); ?></th>
+                        <td>
+                            <ul>
+                                <?php foreach ($shortcodes as $shortcode): ?>
+                                    <li><?php echo esc_html($shortcode); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
 
-                    <!-- آی‌پی سامانه -->
-                    <div class="cardifa-field">
-                        <label for="sms_ip"><?php esc_html_e('آی‌پی سامانه', 'cardifa'); ?></label>
-                        <input type="text" id="sms_ip" name="cardifa_sms_options[ip_address]" value="<?php echo esc_attr($opts['ip_address'] ?? ''); ?>" />
-                    </div>
-
-                    <!-- شماره خط خدماتی -->
-                    <div class="cardifa-field">
-                        <label for="sms_line_number"><?php esc_html_e('شماره خط خدماتی', 'cardifa'); ?></label>
-                        <input type="text" id="sms_line_number" name="cardifa_sms_options[line_number]" value="<?php echo esc_attr($opts['line_number'] ?? ''); ?>" placeholder="<?php esc_attr_e('مثلاً 1000XXXXXXX', 'cardifa'); ?>" />
-                        <small><?php esc_html_e('شماره خط خدماتی که پیامک با آن ارسال می‌شود', 'cardifa'); ?></small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- پیامک‌های رویدادی -->
-            <div class="cardifa-card">
-                <h3><?php esc_html_e('پیامک‌های رویدادی', 'cardifa'); ?></h3>
-                <div class="cardifa-fields three-column">
-                    <?php
-                    $triggers = [
-                        'register' => __('کد {OTP} ثبت نام', 'cardifa'),
-                        'confirm_register' => __('تأیید ثبت نام', 'cardifa'),
-                        'login_code' => __('کد ورود', 'cardifa'),
-                        'expiry_alert' => __('یادآوری پایان اشتراک', 'cardifa'),
-                    ];
-                    foreach ($triggers as $key => $label) : ?>
-                        <div class="cardifa-field">
-                            <label>
-                                <input type="checkbox" name="cardifa_sms_options[triggers][<?php echo esc_attr($key); ?>][enabled]" value="1" <?php checked($opts['triggers'][$key]['enabled'] ?? false, true); ?>>
-                                <?php echo esc_html($label); ?>
-                            </label>
-                            <textarea name="cardifa_sms_options[triggers][<?php echo esc_attr($key); ?>][message]" rows="2" placeholder="<?php esc_attr_e('متن پیامک', 'cardifa'); ?>"><?php echo esc_textarea($opts['triggers'][$key]['message'] ?? ''); ?></textarea>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-
-            <!-- شورت‌کدها -->
-            <div class="cardifa-card">
-                <h3><?php esc_html_e('لیست کدهای کوتاه', 'cardifa'); ?></h3>
-                <ul class="shortcodes">
-                    <li><code>{otp}</code>: <?php esc_html_e('کد یک‌بار مصرف', 'cardifa'); ?></li>
-                    <li><code>{expiry}</code>: <?php esc_html_e('تاریخ انقضا', 'cardifa'); ?></li>
-                    <li><code>{subscription_end}</code>: <?php esc_html_e('پایان اشتراک', 'cardifa'); ?></li>
-                </ul>
-            </div>
+                <?php submit_button(); ?>
+            </form>
         </div>
-
         <?php
     }
 }
+
+SMSSettings::init();
