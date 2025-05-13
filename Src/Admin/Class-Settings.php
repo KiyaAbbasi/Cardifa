@@ -134,7 +134,7 @@ class Class_Settings
             echo '<section id="cardifa-main-content">';
                 switch ($current) {
                     case 'sms':
-                        \Cardifa\Admin\Settings\SMS\SmsSettings::render_panel();
+                        \Cardifa\Admin\Settings\SmsSettings::render_panel();
                         break;
                     case 'users':
                         \Cardifa\Admin\Settings\UsersSettings::render_panel();
