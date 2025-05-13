@@ -35,17 +35,6 @@ class SmsSettings
         $opts = get_option('cardifa_sms_options', []);
         ?>
 
-        <div class="cardifa-panel">
-            <!-- هدر بالا -->
-            <div class="cardifa-header">
-                <h1><?php esc_html_e('تنظیمات کاردیفا', 'cardifa'); ?></h1>
-                <p><?php esc_html_e('به پنل مدیریتی کاردیفا خوش‌آمدید', 'cardifa'); ?></p>
-                <div class="header-actions">
-                    <span id="current-date"><?php echo esc_html(date_i18n('l d/m/Y H:i:s')); ?></span>
-                    <button class="button-primary"><?php esc_html_e('ذخیره تنظیمات', 'cardifa'); ?></button>
-                </div>
-            </div>
-
             <!-- وضعیت اتصال به سامانه -->
             <div class="cardifa-card">
                 <h3><?php esc_html_e('وضعیت اتصال به سامانه', 'cardifa'); ?></h3>
