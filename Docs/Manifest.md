@@ -123,6 +123,9 @@ Cardifa/
 │   │   │   ├── Sms_Settings.php
 │   │   │   ├── Users_Settings.php
 │   │   │   ├── Plans_Settings.php
+│   │   │   ├── SMS/
+│   │   |   │   ├──SMSHandler.php // فایل خالی
+│   │   |   │   ├──ShortcodeHandler.php // فایل خالی
 │   ├── API/
 │   │   ├── Ajax_Handler.php
 │   │   ├── Class-Rest-Endpoints.php
