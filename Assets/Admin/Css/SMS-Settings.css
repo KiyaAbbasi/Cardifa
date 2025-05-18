@@ -1,0 +1,620 @@
+/*
+ * فایل CSS تنظیمات پیامکی کاردیفا
+ * مسیر: assets/css/admin/sms-settings.css
+ */
+
+
+body {
+    background-color: #f6f8fc;
+    direction: rtl;
+    color: #333;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Cards Styles */
+.card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    max-width: 100%;
+    width: 100%;
+    border:none;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    margin-left: 10px;
+    background-color: rgba(0, 196, 140, 0.1);
+    border-radius: 50%;
+}
+
+.card-icon i {
+    color: #666F78;
+    font-size: 16px;
+}
+
+.card-title {
+    font-size: 16px;
+}
+
+.card-title span {
+    color: #17cb96;
+    font-weight: bold;
+}
+
+.card-title-gray {
+    color: #666F78 !important;  
+}
+
+.card-title-regular {
+    color: #333;
+    font-weight: normal;
+}
+
+/* Connection Status Card */
+.card-content {
+    display: flex;
+    gap: 20px;
+}
+
+.left-content {
+    flex: 1;
+    width: 65%;
+    max-width: 65%;
+}
+
+.right-content {
+    width: 35%;
+    max-width: 35%;
+}
+
+.connection-wrapper {
+    background-color: #f8faff;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.connection-title {
+    font-size: 0.8em;
+    color: #76ABFF;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.status-section {
+    margin-bottom: 20px;
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.status-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e6f7f1;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+.status-icon i {
+    color: #17cb96;
+    font-size: 12px;
+}
+
+.status-text {
+    font-size: 13px;
+    color: #5e6472;
+}
+
+.status-text strong {
+    color: #17cb96;
+    font-weight: bold;
+}
+
+.status-number {
+    color: #ff5c5c;
+    font-weight: bold;
+}
+
+/* Form Styles */
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.form-group {
+    width: calc(50% - 20px);
+    margin: 0 10px 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: #5e6472;
+    font-weight: 600;
+}
+
+.form-label.required:after {
+    content: '*';
+    color: #ff5c5c;
+    margin-right: 3px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #e1e5ea;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: border 0.3s ease;
+    background-color: #f8faff;
+}
+
+.form-input:focus {
+    border-color: #17cb96;
+    outline: none;
+}
+
+.form-note {
+    font-size: 12px;
+    color: #ff5c5c;
+    margin-top: 5px;
+}
+
+/* SMS Event Cards */
+.sms-event-card {
+    margin-bottom: 20px;
+}
+
+.event-form-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.event-item {
+    width: calc(33.33% - 20px);
+    margin: 0 10px 20px;
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 18px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e1e5ea;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #17cb96;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(16px);
+}
+
+.event-textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    border: 1px solid #e1e5ea;
+    border-radius: 8px;
+    font-size: 13px;
+    resize: none;
+    background-color: #f8faff;
+}
+
+.event-textarea:focus {
+    border-color: #17cb96;
+    outline: none;
+}
+
+/* Short Codes Section */
+.shortcodes-header {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.shortcodes-header span {
+    color: #17cb96;
+    font-weight: bold;
+}
+
+.shortcodes-subtitle {
+    color: #5e6472;
+    font-size: 14px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.shortcodes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.shortcode-item {
+    background-color: #f8faff;
+    border-radius: 8px;
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.shortcode-text {
+    font-size: 13px;
+    color: #5e6472;
+}
+
+.shortcode-code {
+    font-family: monospace;
+    color: #333;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+/* Send SMS Form */
+.send-sms-form {
+    margin-top: 20px;
+}
+
+.send-sms-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #e1e5ea;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 10px;
+    background-color: #f8faff;
+}
+
+.send-button-row {
+    text-align: end;
+}
+
+.send-button {
+    background-color: #17cb96;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.send-button:hover {
+    background-color: #00a070;
+}
+
+.shortcode-title {
+    color: #627d98;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.shortcode-opt {
+    font-weight: bold;
+    color: #334e68;
+    font-size: 12px;
+}
+
+
+
+/* ---------- New Code ------------- */
+
+/* وضعیت اتصال */
+.status-connected {
+    color: #00c48c;
+    font-weight: bold;
+}
+
+.status-disconnected {
+    color: #ff5c5c;
+    font-weight: bold;
+}
+
+/* فیلدهای فرم */
+.form-input,
+.send-sms-input,
+.event-textarea,
+#test-sms-type,
+#test-sms-message {
+    width: 100%;
+    border: none !important;
+    border-radius: 8px !important;
+    background-color: #f8faff !important;
+    padding: 10px 15px !important;
+    font-size: 13px !important;
+}
+
+/* کاردهای رویدادی */
+.sms-event-card {
+    display: none;
+}
+
+/* دکمه‌ها */
+.send-button {
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+}
+
+/* آیکون وضعیت */
+.status-icon i.fa-times {
+    color: #ff5c5c !important;
+}
+
+.status-icon i.fa-check {
+    color: #00c48c !important;
+}
+
+.status-icon i.fa-sms {
+    color: #76ABFF !important;
+}
+
+/* پیامک‌های رویدادی */
+.event-form-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.event-item {
+    width: calc(33.33% - 20px);
+    margin: 0 10px 20px;
+}
+
+.event-textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    resize: none;
+}
+
+/* شورت کدها */
+.shortcodes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.shortcode-item {
+    background-color: #f8faff;
+    border-radius: 8px;
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.shortcode-text {
+    font-size: 13px;
+    color: #5e6472;
+}
+
+.shortcode-code {
+    font-family: monospace;
+    color: #333;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.shortcode-opt {
+    font-weight: bold;
+    color: #334e68;
+}
+
+/* کانتینر اصلی */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* کاردها */
+.card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.card-content {
+    display: flex;
+    gap: 20px;
+}
+
+.left-content {
+    flex: 1;
+    width: 65%;
+    max-width: 65%;
+}
+
+.right-content {
+    width: 35%;
+    max-width: 35%;
+}
+
+.connection-wrapper {
+    background-color: #f8faff;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.status-section {
+    margin-bottom: 20px;
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.status-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e6f7f1;
+    border-radius: 50%;
+    margin-left: 10px;
+}
+
+.status-text {
+    font-size: 13px;
+    color: #5e6472;
+}
+
+.status-number {
+    color: #00c48c;
+    font-weight: bold;
+}
+
+.send-sms-form {
+    margin-top: 20px;
+}
+
+.send-button-row {
+    text-align: end;
+    margin-top: 15px;
+}
+
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.form-group {
+    width: calc(50% - 20px);
+    margin: 0 10px 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: #5e6472;
+    font-weight: 600;
+}
+
+.form-label.required:after {
+    content: '*';
+    color: #ff5c5c;
+    margin-right: 3px;
+}
+
+.form-note {
+    font-size: 12px;
+    color: #ff5c5c;
+    margin-top: 5px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    margin-left: 10px;
+    background-color: rgba(0, 196, 140, 0.1);
+    border-radius: 50%;
+}
+
+.card-icon i {
+    color: #666F78;
+    font-size: 16px;
+}
+
+.card-title {
+    font-size: 16px;
+}
+
+.card-title span {
+    color: #00c48c;
+    font-weight: bold;
+}
+
+.card-title-gray {
+    color: #666F78 !important;  
+}
+
+.card-title-regular {
+    color: #333;
+    font-weight: normal;
+}
+
+.connection-title {
+    font-size: 0.8em;
+    color: #76ABFF;
+    margin-bottom: 15px;
+    font-weight: 600;
+}

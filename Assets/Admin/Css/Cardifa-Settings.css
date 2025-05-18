@@ -1,0 +1,669 @@
+/* 
+ * File: Cardifa-Settings.css
+ * Description: استایل کامل پنل تنظیمات افزونه Cardifa مطابق طراحی نهایی فیگما
+ * Author: Kiya Holding
+ */
+
+/* =======================================================
+   🔤 فونت YekanBakh (بارگذاری از مسیر fonts)
+======================================================= */
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('../fonts/YekanBakh/YekanBakh.ttf') format('truetype');
+}
+
+/* اعمال فونت YekanBakh به تمام بخش‌های مهم رابط کاربری پنل */
+body.wp-admin,
+#cardifa-settings-wrapper,
+#cardifa-settings-wrapper h1,
+#cardifa-settings-wrapper h2,
+#cardifa-settings-wrapper label,
+#cardifa-settings-wrapper input,
+#cardifa-settings-wrapper select,
+#cardifa-settings-wrapper .nav-tab,
+#cardifa-settings-wrapper .nav-tab-active,
+#cardifa-settings-wrapper .button,
+#cardifa-settings-wrapper .button-primary,
+.rtl h1, .rtl h2, .rtl h3, .rtl h4, .rtl h5, .rtl h6 {
+  font-family: 'YekanBakh', sans-serif !important;
+}
+
+/* حذف پدینگ پیش‌فرض محتوای ادمین وردپرس */
+#wpbody-content,
+#wpcontent {
+  padding: 0px !important;
+}
+
+/* غیرفعال‌سازی استایل فوکوس روی آواتار و لینک‌ها */
+.wp-person a:focus .gravatar,
+a:focus,
+a:focus .media-icon img,
+a:focus .plugin-icon {
+  color: #04395900;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* =======================================================
+   🧱 ساختار کلی Layout پنل تنظیمات
+======================================================= */
+
+/* ساختار اصلی صفحه تنظیمات با رنگ پس‌زمینه اختصاصی */
+#cardifa-settings-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'YekanBakh', sans-serif;
+  background-color: #f1f6fb;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* =======================================================
+   📚 ستون سمت راست (Sidebar) - ۲۵٪ از عرض
+======================================================= */
+
+/* سایدبار اصلی با پس‌زمینه سفید */
+#cardifa-sidebar {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  position: relative;
+}
+
+/* بخش سبز رنگ بالای سایدبار شامل لوگو */
+.sidebar-top-bg {
+  background-color: #17cb96;
+  height: 160px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 0px 0px 0px;
+}
+
+/* لوگوی کاردیفا */
+.sidebar-top-bg .logo img {
+  max-width: 210px;
+  height: auto;
+}
+
+/* =======================================================
+   🙋‍♂️ ردیف دوم: باکس پروفایل کاربر در سایدبار
+======================================================= */
+
+/* باکس کلی شامل آواتار و نام کاربر */
+.cardifa-user-box {
+  position: relative;
+  margin-top: -42px;
+  background: #f2f7ff;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  z-index: 5;
+  width: 80%;
+  border-radius: 10px;
+  border: none;
+  margin: -15% auto 0px;
+}
+
+/* آواتار کاربر (دایره‌ای با پس‌زمینه خاکستری) */
+.cardifa-user-box .avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #eee;
+}
+
+/* اطلاعات کاربر - نام و نقش */
+.cardifa-user-box .meta {
+  text-align: right;
+  line-height: 1.5;
+}
+
+/* نام کاربر (تایپوگرافی بولد) */
+.cardifa-user-box .meta strong {
+  color: #313131;
+  display: block;
+  font-size: 18px;
+}
+
+/* نقش کاربر (سبک و ساده‌تر) */
+.cardifa-user-box .meta span {
+  font-size: 18px;
+  color: #313131;
+  font-weight: 400 !important;
+}
+
+/* =======================================================
+   🧭 منوهای سایدبار پنل تنظیمات
+======================================================= */
+
+/* ساختار کلی ناوبری */
+.cardifa-nav {
+  padding: 30px 20px 0px 0px;
+  flex: 1;
+  overflow-y: hidden;
+}
+
+/* حذف bullet لیست */
+.cardifa-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* آیتم‌های هر منوی سایدبار */
+.cardifa-nav ul li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  border-radius: 0;
+  transition: all 0.2s ease;
+  height: 40px;
+  margin: 5px 0px;
+}
+
+/* منوی فعال یا هاورشده */
+.cardifa-nav ul li a.active,
+.cardifa-nav ul li a:hover {
+  font-weight: bold;
+  background-color: #f2f7ff;
+  border-radius: 0px 10px 10px 0px;
+}
+
+/* =======================================================
+   🖥 ستون اصلی (Main) - محتوای تنظیمات ۷۵٪ عرض
+======================================================= */
+
+#cardifa-main {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =======================================================
+   🧩 هدر بالای بخش اصلی پنل (تنظیمات کاردیفا)
+======================================================= */
+
+/* ساختار هدر */
+#cardifa-main-header {
+  height: 10%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e3e3e3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+}
+
+/* تیتر هدر: "تنظیمات کاردیفا" */
+#cardifa-main-header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #666f78;
+  padding:5px 0px;
+}
+
+/* زیرتیتر: متن خوش‌آمدگویی */
+#cardifa-main-header p {
+  font-size: 13px;
+  color: #666;
+  margin: 6px 0 0;
+}
+
+/* ساختار کلی ستون سمت راست هدر */
+#cardifa-main-header .right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+}
+
+/* کادر تاریخ و ساعت شمسی */
+#cardifa-main-header .date-time {
+  color: #666f78;
+  background: #f2f7ff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: default;
+  width: 250px;
+  max-width: 250px;
+  text-align: center;
+}
+
+/* آیکون زنگوله نوتیفیکیشن */
+#cardifa-main-header .hi-icon-bell {
+  color: #666f78;
+  background: #f2f7ff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* دکمه ذخیره تنظیمات */
+#cardifa-main-header button.primary-button {
+  background-color: #17cb96;
+  color: white;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* =======================================================
+   🧾 بخش اصلی محتوا در پنل کاردیفا (تب‌ها و محتوا)
+======================================================= */
+
+/* محتوای اصلی تب‌ها */
+#cardifa-main-content {
+  height: 90%;
+  padding: 24px 32px;
+  background-color: #f2f7ff;
+  overflow-y: auto;
+}
+
+/* =======================================================
+   📂 ساختار فرم‌ها و تنظیمات عمومی
+======================================================= */
+
+/* فرم پلن‌ها و تنظیمات (ساختار عمودی) */
+#cardifa-settings-wrapper .form-table {
+  margin: 0;
+  border: none;
+}
+
+/* گروه‌بندی ردیف‌ها به صورت بلوکی */
+#cardifa-settings-wrapper .form-table tbody {
+  display: flex;
+  flex-direction: column;
+}
+
+/* استایل هر ردیف */
+#cardifa-settings-wrapper .form-table tbody tr {
+  display: block;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* آخرین ردیف بدون خط پایین */
+#cardifa-settings-wrapper .form-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* سلول‌های هر ردیف */
+#cardifa-settings-wrapper .form-table tbody tr td {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* =======================================================
+   🔠 فیلدهای ورودی و Placeholder
+======================================================= */
+
+/* ورودی‌های فرم */
+#cardifa-settings-wrapper input,
+#cardifa-settings-wrapper select {
+  font-size: 14px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Placeholder با فونت فارسی */
+#cardifa-settings-wrapper input::placeholder {
+  color: #999;
+  font-family: 'YekanBakh', sans-serif;
+}
+
+/* =======================================================
+   ➕ دکمه افزودن پلن جدید
+======================================================= */
+
+#cardifa-add-plan {
+  background: #28a745;
+  color: #ffffff !important;
+  border: 2px solid #28a745;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 12px;
+}
+
+#cardifa-add-plan:hover {
+  background: #218838;
+  border-color: #1e7e34;
+}
+
+/* =======================================================
+   ❌ دکمه حذف پلن
+======================================================= */
+
+.remove-plan {
+  background: #ffffff;
+  color: #dc3545 !important;
+  border: 2px solid #dc3545;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.remove-plan:hover {
+  background: #dc3545;
+  color: #ffffff !important;
+  border-color: #c82333;
+}
+
+/* =======================================================
+   🧿 آیکون‌های Fontello و Dashicons
+======================================================= */
+
+/* آیکون‌های Dashicons */
+.dashicons,
+.dashicons:before {
+  font-family: 'dashicons' !important;
+}
+
+/* آیکون‌های Fontello */
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-family: 'fontello' !important;
+}
+
+/* آیکون اختصاصی برای منوی اصلی (در fontello.css) */
+.icon-cardifa:before {
+  content: "\e800";
+  font-family: "fontello" !important;
+  font-size: 20px;
+  vertical-align: middle;
+  line-height: 1;
+  display: inline-block;
+}
+
+/* =======================================================
+   🧱 ساختار کلی تنظیمات (نسخه قدیمی با سایدبار چپ)
+======================================================= */
+
+/* لایه‌بندی اصلی */
+.cardifa-settings-layout {
+  display: flex;
+  height: 100%;
+  min-height: 80vh;
+}
+
+/* سایدبار چپ (240px) */
+.cardifa-settings-sidebar {
+  width: 240px;
+  border-left: 1px solid #e1e1e1;
+  background: #fafafa;
+  padding: 1.5rem 1rem;
+}
+
+/* لوگو در سایدبار */
+.cardifa-settings-sidebar .cardifa-logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.cardifa-settings-sidebar .cardifa-logo img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* آیتم‌های منو در سایدبار نسخه قدیمی */
+.cardifa-settings-sidebar nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cardifa-settings-sidebar nav li {
+  margin-bottom: 1rem;
+}
+
+.cardifa-settings-sidebar nav li a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.cardifa-settings-sidebar nav li a.active,
+.cardifa-settings-sidebar nav li a:hover {
+  background: #e9f5ff;
+  color: #0073aa;
+}
+
+/* =======================================================
+   🧾 محتوای اصلی با padding و اسکرول
+======================================================= */
+.cardifa-settings-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* =======================================================
+   🗂 پنل دو ستونه برای تنظیمات
+======================================================= */
+.cardifa-settings-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* =======================================================
+   📦 کارت تنظیمات (باکس سفید)
+======================================================= */
+.cardifa-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* فاصله بین کارت‌ها */
+.cardifa-card + .cardifa-card {
+  margin-top: 2rem;
+}
+
+/* عنوان داخل هر کارت */
+.cardifa-card h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* خط جداکننده داخل کارت */
+.cardifa-card hr {
+  border: none;
+  border-top: 1px solid #e1e1e1;
+  margin: 1rem 0;
+}
+
+/* =======================================================
+   🎛 فیلدهای درون کارت (دو ستونه)
+======================================================= */
+.cardifa-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.cardifa-field label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.cardifa-field small {
+  display: block;
+  color: #666;
+  margin-top: 0.3rem;
+}
+
+.cardifa-field input:not([type="checkbox"]):not([type="radio"]),
+.cardifa-field select,
+.cardifa-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* =======================================================
+   🟢 وضعیت اتصال به API یا سرور
+======================================================= */
+.cardifa-status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  margin-right: 0.5rem;
+}
+
+/* ---------------------------------------------
+   🎚️ استایل سوئیچ برای جایگزینی چک‌باکس
+--------------------------------------------- */
+.cardifa-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.cardifa-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.cardifa-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 26px;
+}
+
+.cardifa-switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.cardifa-switch input:checked + .slider {
+  background-color: #4cd964;
+}
+
+.cardifa-switch input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+
+/* =======================================================
+   📱 Media Query: موبایل (تا 768px)
+======================================================= */
+
+@media screen and (max-width: 768px) {
+  /* تنظیم عرض‌ها */
+  #cardifa-settings-layout {
+    flex-direction: column;
+  }
+
+  #cardifa-sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cardifa-user-box {
+    width: 90%;
+    margin: 16px auto;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cardifa-nav ul li a {
+    font-size: 13px;
+    padding: 10px 12px;
+    justify-content: center;
+  }
+
+  #cardifa-main {
+    width: 100%;
+  }
+
+  #cardifa-main-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .cardifa-settings-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =======================================================
+   💻 Media Query: تبلت (بین 769px تا 1024px)
+======================================================= */
+
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+  .cardifa-settings-content {
+    grid-template-columns: 1fr;
+  }
+
+  .cardifa-user-box {
+    width: 90%;
+    margin: 16px auto;
+  }
+
+  #cardifa-main-header h1 {
+    font-size: 24px;
+  }
+
+  .cardifa-field input,
+  .cardifa-field select {
+    font-size: 15px;
+  }
+}
